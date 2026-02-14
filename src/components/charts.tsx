@@ -1,4 +1,4 @@
-import { useState, useId } from "react";
+import { useState, useId, useMemo } from "react";
 import {
   AreaChart,
   Area,
@@ -16,27 +16,26 @@ import { formatCurrency } from "../lib/format";
 import type { AmortizationRow, InvestmentGrowthRow } from "../lib/calculations";
 import { useTheme } from "./theme-provider";
 
-// Color palette - returns theme-aware colors
-function useColors() {
+function useChartColors() {
   const { isDark } = useTheme();
 
-  return {
-    principal: isDark ? "#a8a29e" : "#2d2a26", // stone in dark, charcoal in light
-    interest: "#c45d3e", // terracotta works in both
-    balance: "#7a9a7a", // sage
+  return useMemo(() => ({
+    principal: isDark ? "#a8a29e" : "#2d2a26",
+    interest: "#c45d3e",
+    balance: "#7a9a7a",
     contributions: isDark ? "#a8a29e" : "#2d2a26",
     growth: "#c45d3e",
-    tax: "#6b8e6b", // muted green
-    insurance: "#8b7355", // tan
-    hoa: "#d97b5d", // lighter terracotta
-    other: "#9cb89c", // light sage
+    tax: "#6b8e6b",
+    insurance: "#8b7355",
+    hoa: "#d97b5d",
+    other: "#9cb89c",
     text: isDark ? "#a8a29e" : "#6b6560",
     axis: isDark ? "#44403c" : "#e8e4dc",
     tooltip: {
       bg: isDark ? "#292524" : "#faf8f5",
       border: isDark ? "#44403c" : "#e8e4dc",
     },
-  };
+  }), [isDark]);
 }
 
 type ChartView = "balance" | "payments";
@@ -56,7 +55,7 @@ interface BalanceChartProps {
 
 export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: BalanceChartProps) {
   const [view, setView] = useState<ChartView>("balance");
-  const COLORS = useColors();
+  const COLORS = useChartColors();
   const gradientId = useId();
   const principalGradientId = `principal${gradientId}`;
   const interestGradientId = `interest${gradientId}`;
@@ -265,7 +264,7 @@ interface PaymentBreakdownChartProps {
 }
 
 export function PaymentBreakdownChart({ principal, interest }: PaymentBreakdownChartProps) {
-  const COLORS = useColors();
+  const COLORS = useChartColors();
   const total = principal + interest;
   if (total === 0) return null;
 
@@ -327,7 +326,7 @@ interface InvestmentGrowthChartProps {
 }
 
 export function InvestmentGrowthChart({ schedule }: InvestmentGrowthChartProps) {
-  const COLORS = useColors();
+  const COLORS = useChartColors();
   const gradientId = useId();
   const totalGradientId = `total${gradientId}`;
   const contribGradientId = `contrib${gradientId}`;
@@ -417,7 +416,7 @@ interface InvestmentBreakdownChartProps {
 }
 
 export function InvestmentBreakdownChart({ contributions, interest }: InvestmentBreakdownChartProps) {
-  const COLORS = useColors();
+  const COLORS = useChartColors();
   const total = contributions + interest;
   if (total === 0) return null;
 
@@ -479,7 +478,7 @@ interface InvestmentStackedChartProps {
 }
 
 export function InvestmentStackedChart({ schedule }: InvestmentStackedChartProps) {
-  const COLORS = useColors();
+  const COLORS = useChartColors();
   const gradientId = useId();
   const contribStackGradientId = `contribStack${gradientId}`;
   const interestStackGradientId = `interestStack${gradientId}`;
@@ -597,7 +596,7 @@ export function MortgageCostChart({
   hoa = 0,
   customCosts = [],
 }: MortgageCostChartProps) {
-  const COLORS = useColors();
+  const COLORS = useChartColors();
   const customCostsTotal = customCosts.reduce((sum, c) => sum + c.value, 0);
   const total = principal + interest + tax + insurance + hoa + customCostsTotal;
   if (total === 0) return null;
