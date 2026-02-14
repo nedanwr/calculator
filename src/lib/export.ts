@@ -82,8 +82,8 @@ async function downloadWorkbook(workbook: Workbook, filename: string) {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   } catch (error) {
-    console.error("Failed to generate Excel file:", error);
-    throw error;
+    const message = error instanceof Error ? error.message : "Unknown error";
+    throw new Error(`Failed to generate Excel file: ${message}`);
   }
 }
 
