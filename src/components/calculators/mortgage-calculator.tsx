@@ -18,6 +18,9 @@ import { useTheme } from "../theme-provider";
 import { ExportControls } from "../export-controls";
 import { exportMortgageCSV, exportMortgageExcel } from "../../lib/export";
 import { printMortgage } from "../../lib/print";
+import { ExtraPaymentSection } from "../extra-payment-section";
+import { EarlyPayoffSavings } from "../early-payoff-savings";
+import { PIBreakdown } from "../pi-breakdown";
 
 type InputMode = "dollar" | "percent";
 type Frequency = "monthly" | "yearly";
@@ -606,85 +609,17 @@ export function MortgageCalculator() {
         </div>
 
         {/* Extra Payments */}
-        <div className="pt-3 border-t border-sand">
-          <label className="block text-xs font-medium text-slate mb-2 tracking-wide uppercase">
-            Extra Payments
-          </label>
-          <div className="grid grid-cols-2 gap-1.5 mb-2">
-            {[
-              { id: "none" as ExtraPaymentType, label: "None" },
-              { id: "extra_monthly" as ExtraPaymentType, label: "Monthly" },
-              { id: "extra_yearly" as ExtraPaymentType, label: "Yearly" },
-              { id: "biweekly" as ExtraPaymentType, label: "Biweekly" },
-            ].map((option) => (
-              <button
-                key={option.id}
-                onClick={() =>
-                  setInputs((prev) => ({ ...prev, extraPaymentType: option.id }))
-                }
-                className={`
-                  py-2 px-1.5 rounded-lg text-xs font-medium transition-all duration-200
-                  ${
-                    inputs.extraPaymentType === option.id
-                      ? "bg-charcoal text-ivory"
-                      : "bg-cream text-slate hover:text-charcoal border border-sand"
-                  }
-                `}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-
-          {inputs.extraPaymentType === "extra_monthly" && (
-            <div className="animate-fade-in">
-              <InputField
-                label="Extra per Month"
-                value={inputs.extraMonthly}
-                onChange={(extraMonthly) =>
-                  setInputs((prev) => ({ ...prev, extraMonthly }))
-                }
-                prefix="$"
-              />
-            </div>
-          )}
-
-          {inputs.extraPaymentType === "extra_yearly" && (
-            <div className="animate-fade-in space-y-2">
-              <InputField
-                label="Extra per Year"
-                value={inputs.extraYearlyAmount}
-                onChange={(extraYearlyAmount) =>
-                  setInputs((prev) => ({ ...prev, extraYearlyAmount }))
-                }
-                prefix="$"
-              />
-              <div>
-                <label htmlFor="mortgage-extra-yearly-month" className="block text-xs font-medium text-slate mb-1.5 tracking-wide uppercase">
-                  Apply in Month
-                </label>
-                <select
-                  id="mortgage-extra-yearly-month"
-                  value={inputs.extraYearlyMonth}
-                  onChange={(e) =>
-                    setInputs((prev) => ({ ...prev, extraYearlyMonth: parseInt(e.target.value, 10) || 1 }))
-                  }
-                  className="w-full bg-cream border-2 border-sand rounded-xl py-3 px-3 text-base font-medium text-charcoal focus:border-terracotta focus:bg-ivory transition-all duration-200"
-                >
-                  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((month, idx) => (
-                    <option key={month} value={idx + 1}>{month}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          )}
-
-          {inputs.extraPaymentType === "biweekly" && (
-            <p className="text-xs text-slate mt-1">
-              26 biweekly payments = 13 monthly payments/year
-            </p>
-          )}
-        </div>
+        <ExtraPaymentSection
+          extraPaymentType={inputs.extraPaymentType}
+          extraMonthly={inputs.extraMonthly}
+          extraYearlyAmount={inputs.extraYearlyAmount}
+          extraYearlyMonth={inputs.extraYearlyMonth}
+          onExtraPaymentTypeChange={(type) => setInputs((prev) => ({ ...prev, extraPaymentType: type }))}
+          onExtraMonthlyChange={(value) => setInputs((prev) => ({ ...prev, extraMonthly: value }))}
+          onExtraYearlyAmountChange={(value) => setInputs((prev) => ({ ...prev, extraYearlyAmount: value }))}
+          onExtraYearlyMonthChange={(month) => setInputs((prev) => ({ ...prev, extraYearlyMonth: month }))}
+          selectId="mortgage-extra-yearly-month"
+        />
       </div>
 
       {/* Column 2: Results */}
@@ -705,22 +640,12 @@ export function MortgageCalculator() {
         </div>
 
         {/* P&I Breakdown */}
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="bg-cream rounded-xl p-3">
-            <p className="text-xs text-slate uppercase tracking-wide">Principal</p>
-            <p className="text-base font-serif text-charcoal">
-              {formatCurrencyPrecise(firstMonthBreakdown.principal)}
-            </p>
-            <p className="text-xs text-slate">{firstMonthBreakdown.principalPercent.toFixed(0)}%</p>
-          </div>
-          <div className="bg-cream rounded-xl p-3">
-            <p className="text-xs text-slate uppercase tracking-wide">Interest</p>
-            <p className="text-base font-serif text-charcoal">
-              {formatCurrencyPrecise(firstMonthBreakdown.interest)}
-            </p>
-            <p className="text-xs text-slate">{firstMonthBreakdown.interestPercent.toFixed(0)}%</p>
-          </div>
-        </div>
+        <PIBreakdown
+          principal={firstMonthBreakdown.principal}
+          interest={firstMonthBreakdown.interest}
+          principalPercent={firstMonthBreakdown.principalPercent}
+          interestPercent={firstMonthBreakdown.interestPercent}
+        />
 
         {/* Monthly Cost Breakdown */}
         <div className="grid grid-cols-2 gap-2 mb-4">
@@ -747,30 +672,13 @@ export function MortgageCalculator() {
         </div>
 
         {/* Extra Payment Savings */}
-        {hasExtraPayments && extraPaymentResults && extraPaymentResults.monthsSaved > 0 && (
-          <div className="bg-sage/20 rounded-xl p-4 mb-4 border border-sage/30">
-            <h3 className="text-sm font-semibold text-charcoal mb-2">Early Payoff Savings</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-xs text-slate uppercase tracking-wide">Time Saved</p>
-                <p className="text-base font-serif text-charcoal">
-                  {Math.floor(extraPaymentResults.monthsSaved / 12) > 0 && (
-                    <>{Math.floor(extraPaymentResults.monthsSaved / 12)} yr{Math.floor(extraPaymentResults.monthsSaved / 12) !== 1 ? "s" : ""}</>
-                  )}
-                  {extraPaymentResults.monthsSaved % 12 > 0 && (
-                    <>{Math.floor(extraPaymentResults.monthsSaved / 12) > 0 ? " " : ""}{extraPaymentResults.monthsSaved % 12} mo</>
-                  )}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-slate uppercase tracking-wide">Interest Saved</p>
-                <p className="text-base font-serif text-charcoal">{formatCurrency(extraPaymentResults.interestSaved)}</p>
-              </div>
-            </div>
-            <p className="text-xs text-slate mt-2">
-              Payoff: {Math.floor(extraPaymentResults.actualMonths / 12)} yr{extraPaymentResults.actualMonths % 12 > 0 ? ` ${extraPaymentResults.actualMonths % 12} mo` : ""} (vs {inputs.years} yr)
-            </p>
-          </div>
+        {hasExtraPayments && extraPaymentResults && (
+          <EarlyPayoffSavings
+            monthsSaved={extraPaymentResults.monthsSaved}
+            interestSaved={extraPaymentResults.interestSaved}
+            actualMonths={extraPaymentResults.actualMonths}
+            originalYears={inputs.years}
+          />
         )}
 
         {/* Summary */}
