@@ -2,6 +2,20 @@ export type GracePeriodType = "none" | "no_payment" | "interest_only";
 
 const BALANCE_EPSILON = 0.005;
 
+export function calculateMonthlyPayment(
+  principal: number,
+  monthlyRate: number,
+  numPayments: number
+): number {
+  if (monthlyRate === 0) {
+    return principal / numPayments;
+  }
+  return (
+    (principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments))) /
+    (Math.pow(1 + monthlyRate, numPayments) - 1)
+  );
+}
+
 export interface AmortizationRow {
   period: number;
   payment: number;
@@ -22,16 +36,7 @@ export function generateAmortizationSchedule(
 
   const monthlyRate = annualRate / 100 / 12;
   const numPayments = years * 12;
-
-  // Calculate monthly payment
-  let monthlyPayment: number;
-  if (monthlyRate === 0) {
-    monthlyPayment = principal / numPayments;
-  } else {
-    monthlyPayment =
-      (principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments))) /
-      (Math.pow(1 + monthlyRate, numPayments) - 1);
-  }
+  const monthlyPayment = calculateMonthlyPayment(principal, monthlyRate, numPayments);
 
   const schedule: AmortizationRow[] = [];
   let balance = principal;
@@ -187,19 +192,7 @@ export function calculateLoanPayment(
 
   const monthlyRate = annualRate / 100 / 12;
   const numPayments = years * 12;
-
-  if (monthlyRate === 0) {
-    const monthlyPayment = principal / numPayments;
-    return {
-      monthlyPayment,
-      totalPayment: principal,
-      totalInterest: 0,
-    };
-  }
-
-  const monthlyPayment =
-    (principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments))) /
-    (Math.pow(1 + monthlyRate, numPayments) - 1);
+  const monthlyPayment = calculateMonthlyPayment(principal, monthlyRate, numPayments);
 
   const totalPayment = monthlyPayment * numPayments;
   const totalInterest = totalPayment - principal;
@@ -256,18 +249,8 @@ export function calculateLoanWithGracePeriod(
   }
 
   const numPayments = years * 12;
-  let monthlyPayment = 0;
-  let totalRegularPayments = 0;
-
-  if (monthlyRate === 0) {
-    monthlyPayment = principalAfterGrace / numPayments;
-    totalRegularPayments = principalAfterGrace;
-  } else {
-    monthlyPayment =
-      (principalAfterGrace * (monthlyRate * Math.pow(1 + monthlyRate, numPayments))) /
-      (Math.pow(1 + monthlyRate, numPayments) - 1);
-    totalRegularPayments = monthlyPayment * numPayments;
-  }
+  const monthlyPayment = calculateMonthlyPayment(principalAfterGrace, monthlyRate, numPayments);
+  const totalRegularPayments = monthlyPayment * numPayments;
 
   const totalPayment = totalGracePayments + totalRegularPayments;
   const totalInterest = totalPayment - principal;
@@ -452,16 +435,7 @@ export function calculateLoanWithExtraPayments(
 
   const monthlyRate = annualRate / 100 / 12;
   const standardNumPayments = years * 12;
-
-  // Calculate standard monthly payment
-  let standardMonthlyPayment: number;
-  if (monthlyRate === 0) {
-    standardMonthlyPayment = principal / standardNumPayments;
-  } else {
-    standardMonthlyPayment =
-      (principal * (monthlyRate * Math.pow(1 + monthlyRate, standardNumPayments))) /
-      (Math.pow(1 + monthlyRate, standardNumPayments) - 1);
-  }
+  const standardMonthlyPayment = calculateMonthlyPayment(principal, monthlyRate, standardNumPayments);
 
   const standardTotalPayment = standardMonthlyPayment * standardNumPayments;
   const standardTotalInterest = standardTotalPayment - principal;
@@ -558,16 +532,7 @@ export function generateAmortizationScheduleWithExtra(
 
   const monthlyRate = annualRate / 100 / 12;
   const standardNumPayments = years * 12;
-
-  // Calculate standard monthly payment
-  let standardMonthlyPayment: number;
-  if (monthlyRate === 0) {
-    standardMonthlyPayment = principal / standardNumPayments;
-  } else {
-    standardMonthlyPayment =
-      (principal * (monthlyRate * Math.pow(1 + monthlyRate, standardNumPayments))) /
-      (Math.pow(1 + monthlyRate, standardNumPayments) - 1);
-  }
+  const standardMonthlyPayment = calculateMonthlyPayment(principal, monthlyRate, standardNumPayments);
 
   // For biweekly: effectively 13 monthly payments per year
   const biweeklyExtra = extraPayment.type === "biweekly" ? standardMonthlyPayment / 12 : 0;
