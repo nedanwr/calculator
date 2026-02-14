@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Percent, Home, TrendingUp, DollarSign } from "lucide-react";
 
 import { ThemeSwitcher } from "./components/theme-switcher";
-import { LoanCalculator } from "./components/calculators/loan-calculator";
-import { MortgageCalculator } from "./components/calculators/mortgage-calculator";
-import { InvestmentCalculator } from "./components/calculators/investment-calculator";
-import { CurrencyConverter } from "./components/calculators/currency-converter";
+
+const LoanCalculator = lazy(() => import("./components/calculators/loan-calculator").then(m => ({ default: m.LoanCalculator })));
+const MortgageCalculator = lazy(() => import("./components/calculators/mortgage-calculator").then(m => ({ default: m.MortgageCalculator })));
+const InvestmentCalculator = lazy(() => import("./components/calculators/investment-calculator").then(m => ({ default: m.InvestmentCalculator })));
+const CurrencyConverter = lazy(() => import("./components/calculators/currency-converter").then(m => ({ default: m.CurrencyConverter })));
 
 type CalculatorMode = "loan" | "mortgage" | "investment" | "currency";
 
@@ -70,6 +71,14 @@ function ModeSwitcher({ currentMode, onModeChange, variant, className = "" }: Mo
   );
 }
 
+function LoadingFallback() {
+  return (
+    <div className="flex items-center justify-center h-full min-h-[400px]">
+      <div className="text-slate text-sm">Loading...</div>
+    </div>
+  );
+}
+
 function App() {
   const [mode, setMode] = useState<CalculatorMode>("loan");
 
@@ -104,23 +113,19 @@ function App() {
         <ModeSwitcher currentMode={mode} onModeChange={setMode} variant="mobile" />
       </div>
 
-      {/* Main Content - All calculators rendered, inactive ones hidden to preserve state */}
+      {/* Main Content - Lazy loaded calculators */}
       <main className="relative flex-1 min-h-0 overflow-y-auto">
         <div className="max-w-[1600px] mx-auto px-4 xl:px-8 py-4 lg:h-full">
-          <div className={mode === "loan" ? "" : "hidden"}>
-            <LoanCalculator />
-          </div>
-          <div className={mode === "mortgage" ? "" : "hidden"}>
-            <MortgageCalculator />
-          </div>
-          <div className={mode === "investment" ? "" : "hidden"}>
-            <InvestmentCalculator />
-          </div>
-          <div className={mode === "currency" ? "" : "hidden"}>
-            <div className="flex items-center justify-center h-full py-8">
-              <CurrencyConverter />
-            </div>
-          </div>
+          <Suspense fallback={<LoadingFallback />}>
+            {mode === "loan" && <LoanCalculator />}
+            {mode === "mortgage" && <MortgageCalculator />}
+            {mode === "investment" && <InvestmentCalculator />}
+            {mode === "currency" && (
+              <div className="flex items-center justify-center h-full py-8">
+                <CurrencyConverter />
+              </div>
+            )}
+          </Suspense>
         </div>
       </main>
     </div>
