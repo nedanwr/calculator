@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useId, useCallback } from "react";
 import { Download, Printer, FileSpreadsheet, FileText } from "lucide-react";
-import { useToast } from "./toast-context";
+import { toast } from "sonner";
 
 interface ExportControlsProps {
   onExportCSV: () => void;
@@ -15,17 +15,16 @@ export function ExportControls({ onExportCSV, onExportExcel, onPrint }: ExportCo
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuItemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const menuId = useId();
-  const { showToast } = useToast();
 
   const handleExport = useCallback(async (action: () => void | Promise<void>, format: string) => {
     try {
       await action();
-      showToast(`${format} exported successfully`, "success");
+      toast.success(`${format} exported successfully`);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Export failed";
-      showToast(message, "error");
+      toast.error(message);
     }
-  }, [showToast]);
+  }, []);
 
   const menuItems = [
     { 
@@ -161,7 +160,7 @@ export function ExportControls({ onExportCSV, onExportExcel, onPrint }: ExportCo
             onPrint();
           } catch (error) {
             const message = error instanceof Error ? error.message : "Print failed";
-            showToast(message, "error");
+            toast.error(message);
           }
         }}
         aria-label="Print or save as PDF"
