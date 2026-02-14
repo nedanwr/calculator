@@ -1,5 +1,7 @@
 export type GracePeriodType = "none" | "no_payment" | "interest_only";
 
+const BALANCE_EPSILON = 0.005;
+
 export interface AmortizationRow {
   period: number;
   payment: number;
@@ -491,7 +493,7 @@ export function calculateLoanWithExtraPayments(
   // Extra monthly amount for biweekly
   const biweeklyExtra = extraPayment.type === "biweekly" ? standardMonthlyPayment / 12 : 0;
 
-  while (balance > 0.01 && months < maxMonths) {
+  while (balance > BALANCE_EPSILON && months < maxMonths) {
     months++;
 
     // Calculate interest for this month
@@ -577,7 +579,7 @@ export function generateAmortizationScheduleWithExtra(
   let month = 0;
 
   if (periodType === "monthly") {
-    while (balance > 0.01 && month < standardNumPayments * 2) {
+    while (balance > BALANCE_EPSILON && month < standardNumPayments * 2) {
       month++;
       const interest = balance * monthlyRate;
 
@@ -610,15 +612,14 @@ export function generateAmortizationScheduleWithExtra(
       });
     }
   } else {
-    // Yearly summary
     let year = 0;
-    while (balance > 0.01 && year < years * 2) {
+    while (balance > BALANCE_EPSILON && year < years * 2) {
       year++;
       let yearlyPrincipal = 0;
       let yearlyInterest = 0;
       let yearlyPayment = 0;
 
-      for (let m = 1; m <= 12 && balance > 0.01; m++) {
+      for (let m = 1; m <= 12 && balance > BALANCE_EPSILON; m++) {
         month++;
         const interest = balance * monthlyRate;
 
