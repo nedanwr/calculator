@@ -2,6 +2,8 @@ import { useState, lazy, Suspense } from "react";
 import { Percent, Home, TrendingUp, DollarSign } from "lucide-react";
 
 import { ThemeSwitcher } from "./components/theme-switcher";
+import { ErrorBoundary } from "./components/error-boundary";
+import { ToastProvider } from "./components/toast";
 
 const LoanCalculator = lazy(() => import("./components/calculators/loan-calculator").then(m => ({ default: m.LoanCalculator })));
 const MortgageCalculator = lazy(() => import("./components/calculators/mortgage-calculator").then(m => ({ default: m.MortgageCalculator })));
@@ -116,20 +118,30 @@ function App() {
       {/* Main Content - Lazy loaded calculators */}
       <main className="relative flex-1 min-h-0 overflow-y-auto">
         <div className="max-w-[1600px] mx-auto px-4 xl:px-8 py-4 lg:h-full">
-          <Suspense fallback={<LoadingFallback />}>
-            {mode === "loan" && <LoanCalculator />}
-            {mode === "mortgage" && <MortgageCalculator />}
-            {mode === "investment" && <InvestmentCalculator />}
-            {mode === "currency" && (
-              <div className="flex items-center justify-center h-full py-8">
-                <CurrencyConverter />
-              </div>
-            )}
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<LoadingFallback />}>
+              {mode === "loan" && <LoanCalculator />}
+              {mode === "mortgage" && <MortgageCalculator />}
+              {mode === "investment" && <InvestmentCalculator />}
+              {mode === "currency" && (
+                <div className="flex items-center justify-center h-full py-8">
+                  <CurrencyConverter />
+                </div>
+              )}
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </main>
     </div>
   );
 }
 
-export default App;
+function AppWithProviders() {
+  return (
+    <ToastProvider>
+      <App />
+    </ToastProvider>
+  );
+}
+
+export default AppWithProviders;
