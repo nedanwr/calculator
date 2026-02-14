@@ -35,3 +35,10 @@ export function parseFormattedNumber(value: string): number {
   const parsed = parseFloat(cleaned);
   return isNaN(parsed) ? 0 : parsed;
 }
+
+export function tryParseFormattedNumber(value: string): number | null {
+  if (!value || value.trim() === "") return null;
+  const cleaned = value.replace(/,/g, "");
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? null : parsed;
+}
