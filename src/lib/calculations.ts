@@ -1,6 +1,7 @@
 export type GracePeriodType = "none" | "no_payment" | "interest_only";
 
 const BALANCE_EPSILON = 0.005;
+const MAX_MONTHS_MULTIPLIER = 2;
 
 export function calculateMonthlyPayment(
   principal: number,
@@ -461,7 +462,7 @@ export function calculateLoanWithExtraPayments(
   let totalPaid = 0;
   let totalInterest = 0;
   let months = 0;
-  const maxMonths = standardNumPayments * 2; // Safety limit
+  const maxMonths = standardNumPayments * MAX_MONTHS_MULTIPLIER;
 
   // For biweekly: 26 payments/year = effectively 13 monthly payments
   // Extra monthly amount for biweekly
@@ -544,7 +545,7 @@ export function generateAmortizationScheduleWithExtra(
   let month = 0;
 
   if (periodType === "monthly") {
-    while (balance > BALANCE_EPSILON && month < standardNumPayments * 2) {
+    while (balance > BALANCE_EPSILON && month < standardNumPayments * MAX_MONTHS_MULTIPLIER) {
       month++;
       const interest = balance * monthlyRate;
 
@@ -578,7 +579,7 @@ export function generateAmortizationScheduleWithExtra(
     }
   } else {
     let year = 0;
-    while (balance > BALANCE_EPSILON && year < years * 2) {
+    while (balance > BALANCE_EPSILON && year < years * MAX_MONTHS_MULTIPLIER) {
       year++;
       let yearlyPrincipal = 0;
       let yearlyInterest = 0;
