@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useId, useCallback } from "react";
 import { Download, Printer, FileSpreadsheet, FileText } from "lucide-react";
+import { useToast } from "./toast-context";
 
 interface ExportControlsProps {
   onExportCSV: () => void;
@@ -14,10 +15,29 @@ export function ExportControls({ onExportCSV, onExportExcel, onPrint }: ExportCo
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuItemRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const menuId = useId();
+  const { showToast } = useToast();
+
+  const handleExport = useCallback(async (action: () => void | Promise<void>, format: string) => {
+    try {
+      await action();
+      showToast(`${format} exported successfully`, "success");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Export failed";
+      showToast(message, "error");
+    }
+  }, [showToast]);
 
   const menuItems = [
-    { label: "Excel (.xlsx)", icon: FileSpreadsheet, action: onExportExcel },
-    { label: "CSV (.csv)", icon: FileText, action: onExportCSV },
+    { 
+      label: "Excel (.xlsx)", 
+      icon: FileSpreadsheet, 
+      action: () => handleExport(onExportExcel, "Excel") 
+    },
+    { 
+      label: "CSV (.csv)", 
+      icon: FileText, 
+      action: () => handleExport(onExportCSV, "CSV") 
+    },
   ];
 
   const closeMenu = useCallback(() => {
@@ -136,7 +156,14 @@ export function ExportControls({ onExportCSV, onExportExcel, onPrint }: ExportCo
       </div>
 
       <button
-        onClick={onPrint}
+        onClick={() => {
+          try {
+            onPrint();
+          } catch (error) {
+            const message = error instanceof Error ? error.message : "Print failed";
+            showToast(message, "error");
+          }
+        }}
         aria-label="Print or save as PDF"
         className="p-1.5 text-slate hover:text-charcoal transition-colors"
       >
