@@ -3,7 +3,7 @@ import { Percent, Home, TrendingUp, DollarSign } from "lucide-react";
 
 import { ThemeSwitcher } from "./components/theme-switcher";
 import { ErrorBoundary } from "./components/error-boundary";
-import { ToastProvider } from "./components/toast";
+import { Toaster } from "./components/ui/sonner";
 
 const LoanCalculator = lazy(() => import("./components/calculators/loan-calculator").then(m => ({ default: m.LoanCalculator })));
 const MortgageCalculator = lazy(() => import("./components/calculators/mortgage-calculator").then(m => ({ default: m.MortgageCalculator })));
@@ -86,6 +86,7 @@ function App() {
 
   return (
     <div className="h-screen bg-ivory flex flex-col overflow-hidden">
+      <Toaster />
       {/* Subtle texture overlay */}
       <div
         className="fixed inset-0 pointer-events-none opacity-30"
@@ -136,12 +137,4 @@ function App() {
   );
 }
 
-function AppWithProviders() {
-  return (
-    <ToastProvider>
-      <App />
-    </ToastProvider>
-  );
-}
-
-export default AppWithProviders;
+export default App;
