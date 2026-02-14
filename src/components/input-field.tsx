@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef, useId } from "react";
+import { useState, useLayoutEffect, useRef, useId, useEffect } from "react";
 import { formatWithCommas, parseFormattedNumber } from "../lib/format";
 
 export interface InputFieldProps {
@@ -32,9 +32,9 @@ export function InputField({
   const inputId = id || generatedId;
   const inputRef = useRef<HTMLInputElement>(null);
   const cursorRef = useRef<number>(0);
+  const prevValueRef = useRef(value);
 
   const formatValue = (num: number): string => {
-    if (num === 0) return "";
     const absValue = Math.abs(num);
     const str = decimals > 0 ? absValue.toString() : Math.floor(absValue).toString();
     const formatted = formatWithCommas(str);
@@ -42,17 +42,19 @@ export function InputField({
   };
 
   const [displayValue, setDisplayValue] = useState(() => formatValue(value));
-  const [prevValue, setPrevValue] = useState(value);
 
-  // Sync display value when prop changes externally (React recommended pattern)
-  // This runs during render, avoiding useEffect for derived state
-  if (value !== prevValue) {
-    setPrevValue(value);
-    // Only update display if it doesn't already represent the new value
-    if (parseFormattedNumber(displayValue) !== value) {
-      setDisplayValue(formatValue(value));
+  useEffect(() => {
+    if (value !== prevValueRef.current) {
+      prevValueRef.current = value;
+      if (parseFormattedNumber(displayValue) !== value) {
+        const absValue = Math.abs(value);
+        const str = decimals > 0 ? absValue.toString() : Math.floor(absValue).toString();
+        const formatted = formatWithCommas(str);
+        const formattedValue = value < 0 ? `-${formatted}` : formatted;
+        setDisplayValue(formattedValue);
+      }
     }
-  }
+  }, [value, displayValue, decimals]);
 
   // Restore cursor position after display value changes
   useLayoutEffect(() => {
