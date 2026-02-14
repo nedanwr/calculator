@@ -4,6 +4,7 @@ import {
   formatCurrencyPrecise,
   formatWithCommas,
   parseFormattedNumber,
+  tryParseFormattedNumber,
 } from "./format";
 
 describe("formatCurrency", () => {
@@ -102,5 +103,32 @@ describe("parseFormattedNumber", () => {
 
   it("handles whitespace", () => {
     expect(parseFormattedNumber("  1000  ")).toBe(1000);
+  });
+});
+
+describe("tryParseFormattedNumber", () => {
+  it("parses numbers with commas", () => {
+    expect(tryParseFormattedNumber("1,000,000")).toBe(1000000);
+    expect(tryParseFormattedNumber("1,000")).toBe(1000);
+  });
+
+  it("parses decimal numbers", () => {
+    expect(tryParseFormattedNumber("1000.50")).toBe(1000.5);
+    expect(tryParseFormattedNumber("1,000.25")).toBe(1000.25);
+  });
+
+  it("returns null for invalid input", () => {
+    expect(tryParseFormattedNumber("")).toBeNull();
+    expect(tryParseFormattedNumber("abc")).toBeNull();
+    expect(tryParseFormattedNumber("   ")).toBeNull();
+  });
+
+  it("parses negative numbers", () => {
+    expect(tryParseFormattedNumber("-1000")).toBe(-1000);
+    expect(tryParseFormattedNumber("-1,000")).toBe(-1000);
+  });
+
+  it("handles whitespace", () => {
+    expect(tryParseFormattedNumber("  1000  ")).toBe(1000);
   });
 });
