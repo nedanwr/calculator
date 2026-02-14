@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef, useId, useEffect } from "react";
+import { useState, useLayoutEffect, useRef, useId } from "react";
 import { formatWithCommas, parseFormattedNumber } from "../lib/format";
 
 export interface InputFieldProps {
@@ -32,7 +32,6 @@ export function InputField({
   const inputId = id || generatedId;
   const inputRef = useRef<HTMLInputElement>(null);
   const cursorRef = useRef<number>(0);
-  const prevValueRef = useRef(value);
 
   const formatValue = (num: number): string => {
     const absValue = Math.abs(num);
@@ -42,19 +41,23 @@ export function InputField({
   };
 
   const [displayValue, setDisplayValue] = useState(() => formatValue(value));
+  const [isFocused, setIsFocused] = useState(false);
 
-  useEffect(() => {
-    if (value !== prevValueRef.current) {
-      prevValueRef.current = value;
-      if (parseFormattedNumber(displayValue) !== value) {
-        const absValue = Math.abs(value);
-        const str = decimals > 0 ? absValue.toString() : Math.floor(absValue).toString();
-        const formatted = formatWithCommas(str);
-        const formattedValue = value < 0 ? `-${formatted}` : formatted;
+  // Sync display value when external value changes and input is not focused
+  // Using useLayoutEffect for controlled input sync - this is a valid pattern
+  // for derived state synchronization with external controlled input
+  useLayoutEffect(() => {
+    if (!isFocused) {
+      const absValue = Math.abs(value);
+      const str = decimals > 0 ? absValue.toString() : Math.floor(absValue).toString();
+      const formatted = formatWithCommas(str);
+      const formattedValue = value < 0 ? `-${formatted}` : formatted;
+      if (formattedValue !== displayValue) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setDisplayValue(formattedValue);
       }
     }
-  }, [value, displayValue, decimals]);
+  }, [value, isFocused, displayValue, decimals]);
 
   // Restore cursor position after display value changes
   useLayoutEffect(() => {
@@ -123,6 +126,7 @@ export function InputField({
   };
 
   const handleBlur = () => {
+    setIsFocused(false);
     let finalValue = value;
     // Only apply min constraint on blur if not allowing negative (default behavior)
     // or if allowNegative is true and a min is explicitly set
@@ -131,6 +135,10 @@ export function InputField({
     }
     setDisplayValue(formatValue(finalValue));
     if (finalValue !== value) onChange(finalValue);
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
   };
 
   return (
@@ -156,6 +164,7 @@ export function InputField({
           value={displayValue}
           onChange={handleChange}
           onBlur={handleBlur}
+          onFocus={handleFocus}
           id={inputId}
           aria-labelledby={ariaLabelledBy}
           className={`
