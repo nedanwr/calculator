@@ -21,6 +21,7 @@ import { printLoan } from "../../lib/print";
 import { ExtraPaymentSection } from "../extra-payment-section";
 import { EarlyPayoffSavings } from "../early-payoff-savings";
 import { PIBreakdown } from "../pi-breakdown";
+import { ButtonGroup } from "../button-group";
 
 type RepaymentType = "standard" | "balloon" | "bullet";
 
@@ -42,6 +43,18 @@ const graceOptions: { id: GracePeriodType; label: string }[] = [
   { id: "interest_only", label: "Interest Only" },
   { id: "no_payment", label: "Full Deferral" },
 ];
+
+const repaymentOptions: { id: RepaymentType; label: string }[] = [
+  { id: "standard", label: "Amortized" },
+  { id: "balloon", label: "Interest Only" },
+  { id: "bullet", label: "Bullet" },
+];
+
+const repaymentDescriptions: Record<RepaymentType, string> = {
+  standard: "",
+  balloon: "Interest only, principal at maturity.",
+  bullet: "Everything due at maturity.",
+};
 
 
 export function LoanCalculator() {
@@ -252,77 +265,37 @@ export function LoanCalculator() {
         </div>
 
         {/* Repayment Type */}
-        <div className="pt-3 border-t border-sand">
-          <label className="block text-xs font-medium text-slate mb-2 tracking-wide uppercase">
-            Repayment Type
-          </label>
-          <div className="flex gap-1.5">
-            {[
-              { id: "standard" as RepaymentType, label: "Amortized" },
-              { id: "balloon" as RepaymentType, label: "Interest Only" },
-              { id: "bullet" as RepaymentType, label: "Bullet" },
-            ].map((type) => (
-              <button
-                key={type.id}
-                onClick={() =>
-                  setInputs((prev) => ({
-                    ...prev,
-                    repaymentType: type.id,
-                    ...(type.id !== "standard" && { gracePeriodType: "none" as GracePeriodType, gracePeriodMonths: 0 }),
-                  }))
-                }
-                className={`
-                  flex-1 py-2 px-1.5 rounded-lg text-xs font-medium transition-all duration-200
-                  ${
-                    inputs.repaymentType === type.id
-                      ? "bg-charcoal text-ivory"
-                      : "bg-cream text-slate hover:text-charcoal border border-sand"
-                  }
-                `}
-              >
-                {type.label}
-              </button>
-            ))}
-          </div>
-          {isBalloon && (
-            <p className="text-xs text-slate mt-2">Interest only, principal at maturity.</p>
-          )}
-          {isBullet && (
-            <p className="text-xs text-slate mt-2">Everything due at maturity.</p>
-          )}
-        </div>
+        <ButtonGroup
+          label="Repayment Type"
+          options={repaymentOptions}
+          selected={inputs.repaymentType}
+          onChange={(id) =>
+            setInputs((prev) => ({
+              ...prev,
+              repaymentType: id,
+              ...(id !== "standard" && { gracePeriodType: "none" as GracePeriodType, gracePeriodMonths: 0 }),
+            }))
+          }
+          columns={3}
+          descriptions={repaymentDescriptions}
+        />
 
         {/* Grace Period - only for standard loans */}
         {inputs.repaymentType === "standard" && (
-          <div className="pt-3 border-t border-sand">
-            <label className="block text-xs font-medium text-slate mb-2 tracking-wide uppercase">
-              Grace Period
-            </label>
-            <div className="flex gap-1.5 mb-2">
-              {graceOptions.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() =>
-                    setInputs((prev) => ({
-                      ...prev,
-                      gracePeriodType: option.id,
-                      gracePeriodMonths: option.id === "none" ? 0 : prev.gracePeriodMonths || 6,
-                    }))
-                  }
-                  className={`
-                    flex-1 py-2 px-1.5 rounded-lg text-xs font-medium transition-all duration-200
-                    ${
-                      inputs.gracePeriodType === option.id
-                        ? "bg-charcoal text-ivory"
-                        : "bg-cream text-slate hover:text-charcoal border border-sand"
-                    }
-                  `}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-
+          <>
+            <ButtonGroup
+              label="Grace Period"
+              options={graceOptions}
+              selected={inputs.gracePeriodType}
+              onChange={(id) =>
+                setInputs((prev) => ({
+                  ...prev,
+                  gracePeriodType: id,
+                  gracePeriodMonths: id === "none" ? 0 : prev.gracePeriodMonths || 6,
+                }))
+              }
+              columns={3}
+            />
             {inputs.gracePeriodType !== "none" && (
               <div className="animate-fade-in">
                 <InputField
@@ -337,7 +310,7 @@ export function LoanCalculator() {
                 />
               </div>
             )}
-          </div>
+          </>
         )}
 
         {/* Extra Payments - only for standard loans without grace period */}
