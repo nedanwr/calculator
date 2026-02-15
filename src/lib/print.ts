@@ -19,7 +19,7 @@ function getThemeStyles(isDark: boolean) {
       text: "#f5f2ed",
       textMuted: "#9a9590",
       border: "#3a3733",
-      accent: "#e07a5f",
+      accent: "#e07a5f"
     };
   }
   return {
@@ -28,7 +28,7 @@ function getThemeStyles(isDark: boolean) {
     text: "#2d2a26",
     textMuted: "#6b6560",
     border: "#e8e4dc",
-    accent: "#c45d3e",
+    accent: "#c45d3e"
   };
 }
 
@@ -193,14 +193,19 @@ interface LoanPrintData {
 
 export function printLoan(data: LoanPrintData, isDark: boolean) {
   const date = new Date().toLocaleDateString("en-US", {
-    year: "numeric", month: "long", day: "numeric"
+    year: "numeric",
+    month: "long",
+    day: "numeric"
   });
 
-  const graceInfo = data.gracePeriod && data.gracePeriod.type !== "None"
-    ? `<div class="row"><span class="label">Grace Period</span><span class="value">${data.gracePeriod.months} months (${escapeHtml(data.gracePeriod.type)})</span></div>`
-    : "";
+  const graceInfo =
+    data.gracePeriod && data.gracePeriod.type !== "None"
+      ? `<div class="row"><span class="label">Grace Period</span><span class="value">${data.gracePeriod.months} months (${escapeHtml(data.gracePeriod.type)})</span></div>`
+      : "";
 
-  const scheduleRows = data.schedule.map(row => `
+  const scheduleRows = data.schedule
+    .map(
+      (row) => `
     <tr>
       <td>${row.period}</td>
       <td>${formatCurrency(row.payment)}</td>
@@ -208,7 +213,9 @@ export function printLoan(data: LoanPrintData, isDark: boolean) {
       <td>${formatCurrency(row.interest)}</td>
       <td>${formatCurrency(row.balance)}</td>
     </tr>
-  `).join("");
+  `
+    )
+    .join("");
 
   const content = `
     <h1>Loan Analysis</h1>
@@ -233,7 +240,9 @@ export function printLoan(data: LoanPrintData, isDark: boolean) {
       <div class="row"><span class="label">Total Interest</span><span class="value">${formatCurrency(data.totalInterest)}</span></div>
     </div>
 
-    ${data.schedule.length > 0 ? `
+    ${
+      data.schedule.length > 0
+        ? `
       <h2>Amortization Schedule</h2>
       <table>
         <thead>
@@ -247,7 +256,9 @@ export function printLoan(data: LoanPrintData, isDark: boolean) {
         </thead>
         <tbody>${scheduleRows}</tbody>
       </table>
-    ` : ""}
+    `
+        : ""
+    }
   `;
 
   printViaIframe("Loan Analysis", content, isDark);
@@ -277,10 +288,14 @@ interface MortgagePrintData {
 
 export function printMortgage(data: MortgagePrintData, isDark: boolean) {
   const date = new Date().toLocaleDateString("en-US", {
-    year: "numeric", month: "long", day: "numeric"
+    year: "numeric",
+    month: "long",
+    day: "numeric"
   });
 
-  const scheduleRows = data.schedule.map(row => `
+  const scheduleRows = data.schedule
+    .map(
+      (row) => `
     <tr>
       <td>${row.period}</td>
       <td>${formatCurrency(row.payment)}</td>
@@ -288,7 +303,9 @@ export function printMortgage(data: MortgagePrintData, isDark: boolean) {
       <td>${formatCurrency(row.interest)}</td>
       <td>${formatCurrency(row.balance)}</td>
     </tr>
-  `).join("");
+  `
+    )
+    .join("");
 
   const content = `
     <h1>Mortgage Analysis</h1>
@@ -313,7 +330,13 @@ export function printMortgage(data: MortgagePrintData, isDark: boolean) {
       <div class="row"><span class="label">Property Tax</span><span class="value">${formatCurrency(data.monthlyTax)}</span></div>
       <div class="row"><span class="label">Insurance</span><span class="value">${formatCurrency(data.monthlyInsurance)}</span></div>
       ${data.monthlyHOA > 0 ? `<div class="row"><span class="label">HOA</span><span class="value">${formatCurrency(data.monthlyHOA)}</span></div>` : ""}
-      ${data.customCosts.filter(c => c.monthlyAmount > 0).map(c => `<div class="row"><span class="label">${escapeHtml(c.name || "Other")}</span><span class="value">${formatCurrency(c.monthlyAmount)}</span></div>`).join("")}
+      ${data.customCosts
+        .filter((c) => c.monthlyAmount > 0)
+        .map(
+          (c) =>
+            `<div class="row"><span class="label">${escapeHtml(c.name || "Other")}</span><span class="value">${formatCurrency(c.monthlyAmount)}</span></div>`
+        )
+        .join("")}
     </div>
 
     <h2>Totals</h2>
@@ -353,21 +376,28 @@ interface InvestmentPrintData {
 
 export function printInvestment(data: InvestmentPrintData, isDark: boolean) {
   const date = new Date().toLocaleDateString("en-US", {
-    year: "numeric", month: "long", day: "numeric"
+    year: "numeric",
+    month: "long",
+    day: "numeric"
   });
 
-  const growthMultiple = data.totalContributions > 0
-    ? (data.futureValue / data.totalContributions).toFixed(2)
-    : "0";
+  const growthMultiple =
+    data.totalContributions > 0
+      ? (data.futureValue / data.totalContributions).toFixed(2)
+      : "0";
 
-  const scheduleRows = data.schedule.map(row => `
+  const scheduleRows = data.schedule
+    .map(
+      (row) => `
     <tr>
       <td>${row.year}</td>
       <td>${formatCurrency(row.contributions)}</td>
       <td>${formatCurrency(row.interest)}</td>
       <td>${formatCurrency(row.balance)}</td>
     </tr>
-  `).join("");
+  `
+    )
+    .join("");
 
   const content = `
     <h1>Investment Projection</h1>

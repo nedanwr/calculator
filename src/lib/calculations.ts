@@ -37,7 +37,11 @@ export function generateAmortizationSchedule(
 
   const monthlyRate = annualRate / 100 / 12;
   const numPayments = years * 12;
-  const monthlyPayment = calculateMonthlyPayment(principal, monthlyRate, numPayments);
+  const monthlyPayment = calculateMonthlyPayment(
+    principal,
+    monthlyRate,
+    numPayments
+  );
 
   const schedule: AmortizationRow[] = [];
   let balance = principal;
@@ -59,7 +63,7 @@ export function generateAmortizationSchedule(
         interest,
         balance,
         totalPrincipal,
-        totalInterest,
+        totalInterest
       });
     }
   } else {
@@ -87,7 +91,7 @@ export function generateAmortizationSchedule(
         interest: yearlyInterest,
         balance,
         totalPrincipal,
-        totalInterest,
+        totalInterest
       });
     }
   }
@@ -119,7 +123,7 @@ export function generateInvestmentSchedule(
     year: 0,
     contributions: initial,
     interest: 0,
-    balance: initial,
+    balance: initial
   });
 
   for (let year = 1; year <= years; year++) {
@@ -133,7 +137,7 @@ export function generateInvestmentSchedule(
       year,
       contributions: totalContributions,
       interest: balance - totalContributions,
-      balance,
+      balance
     });
   }
 
@@ -193,7 +197,11 @@ export function calculateLoanPayment(
 
   const monthlyRate = annualRate / 100 / 12;
   const numPayments = years * 12;
-  const monthlyPayment = calculateMonthlyPayment(principal, monthlyRate, numPayments);
+  const monthlyPayment = calculateMonthlyPayment(
+    principal,
+    monthlyRate,
+    numPayments
+  );
 
   const totalPayment = monthlyPayment * numPayments;
   const totalInterest = totalPayment - principal;
@@ -215,7 +223,7 @@ export function calculateLoanWithGracePeriod(
       totalPayment: 0,
       totalInterest: 0,
       principalAfterGrace: 0,
-      graceInterest: 0,
+      graceInterest: 0
     };
   }
 
@@ -228,7 +236,7 @@ export function calculateLoanWithGracePeriod(
       ...result,
       gracePayment: 0,
       principalAfterGrace: principal,
-      graceInterest: 0,
+      graceInterest: 0
     };
   }
 
@@ -238,7 +246,8 @@ export function calculateLoanWithGracePeriod(
   let graceInterest = 0;
 
   if (gracePeriodType === "no_payment") {
-    principalAfterGrace = principal * Math.pow(1 + monthlyRate, gracePeriodMonths);
+    principalAfterGrace =
+      principal * Math.pow(1 + monthlyRate, gracePeriodMonths);
     graceInterest = principalAfterGrace - principal;
     gracePayment = 0;
     totalGracePayments = 0;
@@ -250,7 +259,11 @@ export function calculateLoanWithGracePeriod(
   }
 
   const numPayments = years * 12;
-  const monthlyPayment = calculateMonthlyPayment(principalAfterGrace, monthlyRate, numPayments);
+  const monthlyPayment = calculateMonthlyPayment(
+    principalAfterGrace,
+    monthlyRate,
+    numPayments
+  );
   const totalRegularPayments = monthlyPayment * numPayments;
 
   const totalPayment = totalGracePayments + totalRegularPayments;
@@ -262,7 +275,7 @@ export function calculateLoanWithGracePeriod(
     totalPayment,
     totalInterest,
     principalAfterGrace,
-    graceInterest,
+    graceInterest
   };
 }
 
@@ -276,7 +289,7 @@ export function calculateBalloonLoan(
       monthlyPayment: 0,
       balloonPayment: 0,
       totalPayment: 0,
-      totalInterest: 0,
+      totalInterest: 0
     };
   }
 
@@ -297,7 +310,7 @@ export function calculateBalloonLoan(
     monthlyPayment,
     balloonPayment,
     totalPayment,
-    totalInterest,
+    totalInterest
   };
 }
 
@@ -311,7 +324,7 @@ export function calculateBulletLoan(
       monthlyPayment: 0,
       finalPayment: 0,
       totalPayment: 0,
-      totalInterest: 0,
+      totalInterest: 0
     };
   }
 
@@ -329,7 +342,7 @@ export function calculateBulletLoan(
     monthlyPayment,
     finalPayment,
     totalPayment: finalPayment,
-    totalInterest,
+    totalInterest
   };
 }
 
@@ -343,11 +356,16 @@ export function calculateMortgage(
   monthlyHoa: number = 0
 ): MortgageResult {
   const loanAmount = homePrice - downPayment;
-  const { monthlyPayment } = calculateLoanPayment(loanAmount, annualRate, years);
+  const { monthlyPayment } = calculateLoanPayment(
+    loanAmount,
+    annualRate,
+    years
+  );
   const monthlyPropertyTax = annualPropertyTax / 12;
   const monthlyInsurance = annualInsurance / 12;
 
-  const totalMonthly = monthlyPayment + monthlyPropertyTax + monthlyInsurance + monthlyHoa;
+  const totalMonthly =
+    monthlyPayment + monthlyPropertyTax + monthlyInsurance + monthlyHoa;
 
   return {
     monthlyPrincipalInterest: monthlyPayment,
@@ -356,7 +374,7 @@ export function calculateMortgage(
     monthlyHoa,
     totalMonthly,
     loanAmount,
-    totalCost: totalMonthly * years * 12,
+    totalCost: totalMonthly * years * 12
   };
 }
 
@@ -387,13 +405,17 @@ export function calculateInvestment(
 }
 
 // Extra payment types
-export type ExtraPaymentType = "none" | "extra_monthly" | "extra_yearly" | "biweekly";
+export type ExtraPaymentType =
+  | "none"
+  | "extra_monthly"
+  | "extra_yearly"
+  | "biweekly";
 
 export interface ExtraPaymentConfig {
   type: ExtraPaymentType;
-  extraMonthly: number;      // Extra $ per month
+  extraMonthly: number; // Extra $ per month
   extraYearlyAmount: number; // Extra $ once per year
-  extraYearlyMonth: number;  // Which month (1-12) to apply extra yearly payment
+  extraYearlyMonth: number; // Which month (1-12) to apply extra yearly payment
 }
 
 export interface ExtraPaymentResult {
@@ -430,13 +452,17 @@ export function calculateLoanWithExtraPayments(
       actualTotalInterest: 0,
       monthsSaved: 0,
       interestSaved: 0,
-      effectiveMonthlyPayment: 0,
+      effectiveMonthlyPayment: 0
     };
   }
 
   const monthlyRate = annualRate / 100 / 12;
   const standardNumPayments = years * 12;
-  const standardMonthlyPayment = calculateMonthlyPayment(principal, monthlyRate, standardNumPayments);
+  const standardMonthlyPayment = calculateMonthlyPayment(
+    principal,
+    monthlyRate,
+    standardNumPayments
+  );
 
   const standardTotalPayment = standardMonthlyPayment * standardNumPayments;
   const standardTotalInterest = standardTotalPayment - principal;
@@ -453,7 +479,7 @@ export function calculateLoanWithExtraPayments(
       actualTotalInterest: standardTotalInterest,
       monthsSaved: 0,
       interestSaved: 0,
-      effectiveMonthlyPayment: standardMonthlyPayment,
+      effectiveMonthlyPayment: standardMonthlyPayment
     };
   }
 
@@ -466,7 +492,8 @@ export function calculateLoanWithExtraPayments(
 
   // For biweekly: 26 payments/year = effectively 13 monthly payments
   // Extra monthly amount for biweekly
-  const biweeklyExtra = extraPayment.type === "biweekly" ? standardMonthlyPayment / 12 : 0;
+  const biweeklyExtra =
+    extraPayment.type === "biweekly" ? standardMonthlyPayment / 12 : 0;
 
   while (balance > BALANCE_EPSILON && months < maxMonths) {
     months++;
@@ -484,7 +511,10 @@ export function calculateLoanWithExtraPayments(
       extra = extraPayment.extraMonthly;
     } else if (extraPayment.type === "biweekly") {
       extra = biweeklyExtra;
-    } else if (extraPayment.type === "extra_yearly" && months % 12 === extraPayment.extraYearlyMonth % 12) {
+    } else if (
+      extraPayment.type === "extra_yearly" &&
+      months % 12 === extraPayment.extraYearlyMonth % 12
+    ) {
       extra = extraPayment.extraYearlyAmount;
     }
 
@@ -518,7 +548,7 @@ export function calculateLoanWithExtraPayments(
     actualTotalInterest: totalInterest,
     monthsSaved: Math.max(0, monthsSaved),
     interestSaved: Math.max(0, interestSaved),
-    effectiveMonthlyPayment,
+    effectiveMonthlyPayment
   };
 }
 
@@ -533,10 +563,15 @@ export function generateAmortizationScheduleWithExtra(
 
   const monthlyRate = annualRate / 100 / 12;
   const standardNumPayments = years * 12;
-  const standardMonthlyPayment = calculateMonthlyPayment(principal, monthlyRate, standardNumPayments);
+  const standardMonthlyPayment = calculateMonthlyPayment(
+    principal,
+    monthlyRate,
+    standardNumPayments
+  );
 
   // For biweekly: effectively 13 monthly payments per year
-  const biweeklyExtra = extraPayment.type === "biweekly" ? standardMonthlyPayment / 12 : 0;
+  const biweeklyExtra =
+    extraPayment.type === "biweekly" ? standardMonthlyPayment / 12 : 0;
 
   const schedule: AmortizationRow[] = [];
   let balance = principal;
@@ -545,7 +580,10 @@ export function generateAmortizationScheduleWithExtra(
   let month = 0;
 
   if (periodType === "monthly") {
-    while (balance > BALANCE_EPSILON && month < standardNumPayments * MAX_MONTHS_MULTIPLIER) {
+    while (
+      balance > BALANCE_EPSILON &&
+      month < standardNumPayments * MAX_MONTHS_MULTIPLIER
+    ) {
       month++;
       const interest = balance * monthlyRate;
 
@@ -555,7 +593,10 @@ export function generateAmortizationScheduleWithExtra(
         extra = extraPayment.extraMonthly;
       } else if (extraPayment.type === "biweekly") {
         extra = biweeklyExtra;
-      } else if (extraPayment.type === "extra_yearly" && month % 12 === extraPayment.extraYearlyMonth % 12) {
+      } else if (
+        extraPayment.type === "extra_yearly" &&
+        month % 12 === extraPayment.extraYearlyMonth % 12
+      ) {
         extra = extraPayment.extraYearlyAmount;
       }
 
@@ -574,7 +615,7 @@ export function generateAmortizationScheduleWithExtra(
         interest,
         balance,
         totalPrincipal,
-        totalInterest,
+        totalInterest
       });
     }
   } else {
@@ -595,7 +636,10 @@ export function generateAmortizationScheduleWithExtra(
           extra = extraPayment.extraMonthly;
         } else if (extraPayment.type === "biweekly") {
           extra = biweeklyExtra;
-        } else if (extraPayment.type === "extra_yearly" && m === extraPayment.extraYearlyMonth) {
+        } else if (
+          extraPayment.type === "extra_yearly" &&
+          m === extraPayment.extraYearlyMonth
+        ) {
           extra = extraPayment.extraYearlyAmount;
         }
 
@@ -619,7 +663,7 @@ export function generateAmortizationScheduleWithExtra(
           interest: yearlyInterest,
           balance,
           totalPrincipal,
-          totalInterest,
+          totalInterest
         });
       }
     }

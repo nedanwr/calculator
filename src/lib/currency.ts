@@ -31,7 +31,7 @@ export async function getAvailableCurrencies(): Promise<Currency[]> {
     const data = await response.json();
     currenciesCache = Object.entries(data).map(([code, name]) => ({
       code,
-      name: name as string,
+      name: name as string
     }));
     return currenciesCache;
   } catch (error) {
@@ -66,7 +66,9 @@ export async function getExchangeRate(
     exchangeRatesCache.set(cacheKey, { ...data, fetchedAt: Date.now() });
     return data.rates[to];
   } catch (error) {
-    throw new Error(`Failed to get exchange rate from ${from} to ${to}: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Failed to get exchange rate from ${from} to ${to}: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 

@@ -31,17 +31,17 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="flex flex-col items-center justify-center h-full min-h-[400px] p-8">
-          <div className="bg-terracotta/10 rounded-2xl p-8 max-w-md text-center border border-terracotta/30">
-            <h2 className="text-lg font-semibold text-charcoal mb-2">
+        <div className="flex h-full min-h-[400px] flex-col items-center justify-center p-8">
+          <div className="bg-terracotta/10 border-terracotta/30 max-w-md rounded-2xl border p-8 text-center">
+            <h2 className="text-charcoal mb-2 text-lg font-semibold">
               Something went wrong
             </h2>
-            <p className="text-sm text-slate mb-4">
+            <p className="text-slate mb-4 text-sm">
               An unexpected error occurred. Please try refreshing the page.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-charcoal text-ivory rounded-lg text-sm font-medium hover:bg-graphite transition-colors"
+              className="bg-charcoal text-ivory hover:bg-graphite rounded-lg px-4 py-2 text-sm font-medium transition-colors"
             >
               Refresh Page
             </button>

@@ -1,5 +1,5 @@
+import type { ExtraPaymentType } from "~/lib/calculations";
 import { InputField } from "./input-field";
-import type { ExtraPaymentType } from "../lib/calculations";
 
 interface ExtraPaymentSectionProps {
   extraPaymentType: ExtraPaymentType;
@@ -14,15 +14,25 @@ interface ExtraPaymentSectionProps {
 }
 
 const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
 ];
 
 const EXTRA_PAYMENT_OPTIONS: { id: ExtraPaymentType; label: string }[] = [
   { id: "none", label: "None" },
   { id: "extra_monthly", label: "Monthly" },
   { id: "extra_yearly", label: "Yearly" },
-  { id: "biweekly", label: "Biweekly" },
+  { id: "biweekly", label: "Biweekly" }
 ];
 
 export function ExtraPaymentSection({
@@ -34,26 +44,23 @@ export function ExtraPaymentSection({
   onExtraMonthlyChange,
   onExtraYearlyAmountChange,
   onExtraYearlyMonthChange,
-  selectId = "extra-yearly-month",
+  selectId = "extra-yearly-month"
 }: ExtraPaymentSectionProps) {
   return (
-    <div className="pt-3 border-t border-sand">
-      <label className="block text-xs font-medium text-slate mb-2 tracking-wide uppercase">
+    <div className="border-sand border-t pt-3">
+      <label className="text-slate mb-2 block text-xs font-medium tracking-wide uppercase">
         Extra Payments
       </label>
-      <div className="grid grid-cols-2 gap-1.5 mb-2">
+      <div className="mb-2 grid grid-cols-2 gap-1.5">
         {EXTRA_PAYMENT_OPTIONS.map((option) => (
           <button
             key={option.id}
             onClick={() => onExtraPaymentTypeChange(option.id)}
-            className={`
-              py-2 px-1.5 rounded-lg text-xs font-medium transition-all duration-200
-              ${
-                extraPaymentType === option.id
-                  ? "bg-charcoal text-ivory"
-                  : "bg-cream text-slate hover:text-charcoal border border-sand"
-              }
-            `}
+            className={`rounded-lg px-1.5 py-2 text-xs font-medium transition-all duration-200 ${
+              extraPaymentType === option.id
+                ? "bg-charcoal text-ivory"
+                : "bg-cream text-slate hover:text-charcoal border-sand border"
+            } `}
           >
             {option.label}
           </button>
@@ -80,17 +87,24 @@ export function ExtraPaymentSection({
             prefix="$"
           />
           <div>
-            <label htmlFor={selectId} className="block text-xs font-medium text-slate mb-1.5 tracking-wide uppercase">
+            <label
+              htmlFor={selectId}
+              className="text-slate mb-1.5 block text-xs font-medium tracking-wide uppercase"
+            >
               Apply in Month
             </label>
             <select
               id={selectId}
               value={extraYearlyMonth}
-              onChange={(e) => onExtraYearlyMonthChange(parseInt(e.target.value, 10) || 1)}
-              className="w-full bg-cream border-2 border-sand rounded-xl py-3 px-3 text-base font-medium text-charcoal focus:border-terracotta focus:bg-ivory transition-all duration-200"
+              onChange={(e) =>
+                onExtraYearlyMonthChange(parseInt(e.target.value, 10) || 1)
+              }
+              className="bg-cream border-sand text-charcoal focus:border-terracotta focus:bg-ivory w-full rounded-xl border-2 px-3 py-3 text-base font-medium transition-all duration-200"
             >
               {MONTHS.map((month, idx) => (
-                <option key={month} value={idx + 1}>{month}</option>
+                <option key={month} value={idx + 1}>
+                  {month}
+                </option>
               ))}
             </select>
           </div>
@@ -98,7 +112,7 @@ export function ExtraPaymentSection({
       )}
 
       {extraPaymentType === "biweekly" && (
-        <p className="text-xs text-slate mt-1">
+        <p className="text-slate mt-1 text-xs">
           26 biweekly payments = 13 monthly payments/year
         </p>
       )}

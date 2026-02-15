@@ -1,16 +1,17 @@
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Monitor, Moon, Sun } from "lucide-react";
+
 import { useTheme } from "./theme-provider";
 
 const options = [
   { id: "light" as const, icon: Sun },
   { id: "system" as const, icon: Monitor },
-  { id: "dark" as const, icon: Moon },
+  { id: "dark" as const, icon: Moon }
 ];
 
 const themeLabels = {
   light: "Light",
   system: "System",
-  dark: "Dark",
+  dark: "Dark"
 } as const;
 
 export function ThemeSwitcher() {
@@ -20,7 +21,7 @@ export function ThemeSwitcher() {
     <div
       role="group"
       aria-label="Theme selection"
-      className="flex items-center gap-1 bg-cream rounded-full p-1"
+      className="bg-cream flex items-center gap-1 rounded-full p-1"
     >
       {options.map(({ id, icon: Icon }) => {
         const isPressed = theme === id;
@@ -30,14 +31,11 @@ export function ThemeSwitcher() {
             onClick={() => setTheme(id)}
             aria-pressed={isPressed}
             aria-label={`${themeLabels[id]} theme`}
-            className={`
-              p-2 rounded-full transition-all duration-200
-              ${
-                isPressed
-                  ? "bg-charcoal text-ivory"
-                  : "text-slate hover:text-charcoal"
-              }
-            `}
+            className={`rounded-full p-2 transition-all duration-200 ${
+              isPressed
+                ? "bg-charcoal text-ivory"
+                : "text-slate hover:text-charcoal"
+            } `}
           >
             <Icon size={16} strokeWidth={2} />
           </button>

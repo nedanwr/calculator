@@ -1,4 +1,4 @@
-import { formatCurrencyPrecise } from "../lib/format";
+import { formatCurrencyPrecise } from "~/lib/format";
 
 interface PIBreakdownProps {
   principal: number;
@@ -11,23 +11,23 @@ export function PIBreakdown({
   principal,
   interest,
   principalPercent,
-  interestPercent,
+  interestPercent
 }: PIBreakdownProps) {
   return (
-    <div className="grid grid-cols-2 gap-2 mb-4">
+    <div className="mb-4 grid grid-cols-2 gap-2">
       <div className="bg-cream rounded-xl p-3">
-        <p className="text-xs text-slate uppercase tracking-wide">Principal</p>
-        <p className="text-base font-serif text-charcoal">
+        <p className="text-slate text-xs tracking-wide uppercase">Principal</p>
+        <p className="text-charcoal font-serif text-base">
           {formatCurrencyPrecise(principal)}
         </p>
-        <p className="text-xs text-slate">{principalPercent.toFixed(0)}%</p>
+        <p className="text-slate text-xs">{principalPercent.toFixed(0)}%</p>
       </div>
       <div className="bg-cream rounded-xl p-3">
-        <p className="text-xs text-slate uppercase tracking-wide">Interest</p>
-        <p className="text-base font-serif text-charcoal">
+        <p className="text-slate text-xs tracking-wide uppercase">Interest</p>
+        <p className="text-charcoal font-serif text-base">
           {formatCurrencyPrecise(interest)}
         </p>
-        <p className="text-xs text-slate">{interestPercent.toFixed(0)}%</p>
+        <p className="text-slate text-xs">{interestPercent.toFixed(0)}%</p>
       </div>
     </div>
   );

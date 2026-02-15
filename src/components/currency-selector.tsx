@@ -1,14 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
 import { DollarSign } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
+import { getAvailableCurrencies, type Currency } from "~/lib/currency";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { getAvailableCurrencies, type Currency } from "../lib/currency";
+  SelectValue
+} from "~/components/ui/select";
 
 interface CurrencySelectorProps {
   selectedCurrency: string;
@@ -17,13 +17,23 @@ interface CurrencySelectorProps {
   hideLabel?: boolean;
 }
 
-const COMMON_CURRENCIES = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR"];
+const COMMON_CURRENCIES = [
+  "USD",
+  "EUR",
+  "GBP",
+  "JPY",
+  "CAD",
+  "AUD",
+  "CHF",
+  "CNY",
+  "INR"
+];
 
 export function CurrencySelector({
   selectedCurrency,
   onCurrencyChange,
   disabled = false,
-  hideLabel = false,
+  hideLabel = false
 }: CurrencySelectorProps) {
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,12 +56,14 @@ export function CurrencySelector({
     [currencies]
   );
 
-  const selectedCurrencyData = currencies.find((c) => c.code === selectedCurrency);
+  const selectedCurrencyData = currencies.find(
+    (c) => c.code === selectedCurrency
+  );
 
   return (
     <div className="relative">
       {!hideLabel && (
-        <label className="block text-xs font-medium text-slate mb-1.5 tracking-wide uppercase">
+        <label className="text-slate mb-1.5 block text-xs font-medium tracking-wide uppercase">
           Currency
         </label>
       )}
@@ -76,7 +88,7 @@ export function CurrencySelector({
           {sortedCurrencies.map((currency) => (
             <SelectItem key={currency.code} value={currency.code}>
               <span className="font-semibold">{currency.code}</span>
-              <span className="text-xs opacity-70 ml-2">{currency.name}</span>
+              <span className="ml-2 text-xs opacity-70">{currency.name}</span>
             </SelectItem>
           ))}
         </SelectContent>

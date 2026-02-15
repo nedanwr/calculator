@@ -1,15 +1,16 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import {
-  calculateLoanPayment,
-  calculateLoanWithGracePeriod,
   calculateBalloonLoan,
   calculateBulletLoan,
-  calculateMortgage,
   calculateInvestment,
+  calculateLoanPayment,
   calculateLoanWithExtraPayments,
+  calculateLoanWithGracePeriod,
+  calculateMortgage,
   generateAmortizationSchedule,
-  generateInvestmentSchedule,
   generateAmortizationScheduleWithExtra,
+  generateInvestmentSchedule
 } from "./calculations";
 
 describe("calculateLoanPayment", () => {
@@ -17,17 +18,17 @@ describe("calculateLoanPayment", () => {
     expect(calculateLoanPayment(0, 5, 30)).toEqual({
       monthlyPayment: 0,
       totalPayment: 0,
-      totalInterest: 0,
+      totalInterest: 0
     });
     expect(calculateLoanPayment(100000, 5, 0)).toEqual({
       monthlyPayment: 0,
       totalPayment: 0,
-      totalInterest: 0,
+      totalInterest: 0
     });
     expect(calculateLoanPayment(-100000, 5, 30)).toEqual({
       monthlyPayment: 0,
       totalPayment: 0,
-      totalInterest: 0,
+      totalInterest: 0
     });
   });
 
@@ -48,8 +49,8 @@ describe("calculateLoanPayment", () => {
   it("calculates short-term loan correctly", () => {
     const result = calculateLoanPayment(10000, 5, 1);
     expect(result.monthlyPayment).toBeCloseTo(856.07, 2);
-    expect(result.totalPayment).toBeCloseTo(10272.90, 0);
-    expect(result.totalInterest).toBeCloseTo(272.90, 0);
+    expect(result.totalPayment).toBeCloseTo(10272.9, 0);
+    expect(result.totalInterest).toBeCloseTo(272.9, 0);
   });
 });
 
@@ -69,7 +70,13 @@ describe("calculateLoanWithGracePeriod", () => {
   });
 
   it("calculates interest-only grace period", () => {
-    const result = calculateLoanWithGracePeriod(100000, 6, 30, 6, "interest_only");
+    const result = calculateLoanWithGracePeriod(
+      100000,
+      6,
+      30,
+      6,
+      "interest_only"
+    );
     expect(result.gracePayment).toBeCloseTo(500, 2);
     expect(result.graceInterest).toBeCloseTo(3000, 2);
     expect(result.principalAfterGrace).toBe(100000);
@@ -154,33 +161,58 @@ describe("calculateInvestment", () => {
 
 describe("calculateLoanWithExtraPayments", () => {
   it("returns zeros for invalid inputs", () => {
-    const result = calculateLoanWithExtraPayments(0, 5, 30, { type: "none", extraMonthly: 0, extraYearlyAmount: 0, extraYearlyMonth: 1 });
+    const result = calculateLoanWithExtraPayments(0, 5, 30, {
+      type: "none",
+      extraMonthly: 0,
+      extraYearlyAmount: 0,
+      extraYearlyMonth: 1
+    });
     expect(result.standardMonthlyPayment).toBe(0);
     expect(result.actualMonths).toBe(0);
   });
 
   it("returns standard results with no extra payments", () => {
-    const result = calculateLoanWithExtraPayments(100000, 6, 30, { type: "none", extraMonthly: 0, extraYearlyAmount: 0, extraYearlyMonth: 1 });
+    const result = calculateLoanWithExtraPayments(100000, 6, 30, {
+      type: "none",
+      extraMonthly: 0,
+      extraYearlyAmount: 0,
+      extraYearlyMonth: 1
+    });
     expect(result.monthsSaved).toBe(0);
     expect(result.interestSaved).toBe(0);
     expect(result.actualMonths).toBe(360);
   });
 
   it("calculates extra monthly payments correctly", () => {
-    const result = calculateLoanWithExtraPayments(100000, 6, 30, { type: "extra_monthly", extraMonthly: 200, extraYearlyAmount: 0, extraYearlyMonth: 1 });
+    const result = calculateLoanWithExtraPayments(100000, 6, 30, {
+      type: "extra_monthly",
+      extraMonthly: 200,
+      extraYearlyAmount: 0,
+      extraYearlyMonth: 1
+    });
     expect(result.actualMonths).toBeLessThan(360);
     expect(result.monthsSaved).toBeGreaterThan(0);
     expect(result.interestSaved).toBeGreaterThan(0);
   });
 
   it("calculates biweekly payments correctly", () => {
-    const result = calculateLoanWithExtraPayments(100000, 6, 30, { type: "biweekly", extraMonthly: 0, extraYearlyAmount: 0, extraYearlyMonth: 1 });
+    const result = calculateLoanWithExtraPayments(100000, 6, 30, {
+      type: "biweekly",
+      extraMonthly: 0,
+      extraYearlyAmount: 0,
+      extraYearlyMonth: 1
+    });
     expect(result.actualMonths).toBeLessThan(360);
     expect(result.monthsSaved).toBeGreaterThan(0);
   });
 
   it("calculates extra yearly payments correctly", () => {
-    const result = calculateLoanWithExtraPayments(100000, 6, 30, { type: "extra_yearly", extraMonthly: 0, extraYearlyAmount: 1000, extraYearlyMonth: 1 });
+    const result = calculateLoanWithExtraPayments(100000, 6, 30, {
+      type: "extra_yearly",
+      extraMonthly: 0,
+      extraYearlyAmount: 1000,
+      extraYearlyMonth: 1
+    });
     expect(result.actualMonths).toBeLessThan(360);
     expect(result.monthsSaved).toBeGreaterThan(0);
   });
@@ -239,13 +271,29 @@ describe("generateInvestmentSchedule", () => {
 
 describe("generateAmortizationScheduleWithExtra", () => {
   it("returns empty array for invalid inputs", () => {
-    const result = generateAmortizationScheduleWithExtra(0, 5, 30, { type: "none", extraMonthly: 0, extraYearlyAmount: 0, extraYearlyMonth: 1 });
+    const result = generateAmortizationScheduleWithExtra(0, 5, 30, {
+      type: "none",
+      extraMonthly: 0,
+      extraYearlyAmount: 0,
+      extraYearlyMonth: 1
+    });
     expect(result).toEqual([]);
   });
 
   it("generates shorter schedule with extra payments", () => {
     const standard = generateAmortizationSchedule(100000, 6, 30, "yearly");
-    const extra = generateAmortizationScheduleWithExtra(100000, 6, 30, { type: "extra_monthly", extraMonthly: 200, extraYearlyAmount: 0, extraYearlyMonth: 1 }, "yearly");
+    const extra = generateAmortizationScheduleWithExtra(
+      100000,
+      6,
+      30,
+      {
+        type: "extra_monthly",
+        extraMonthly: 200,
+        extraYearlyAmount: 0,
+        extraYearlyMonth: 1
+      },
+      "yearly"
+    );
     expect(extra.length).toBeLessThan(standard.length);
   });
 });

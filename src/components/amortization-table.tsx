@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { formatCurrency } from "../lib/format";
-import type { AmortizationRow } from "../lib/calculations";
+
+import type { AmortizationRow } from "~/lib/calculations";
+import { formatCurrency } from "~/lib/format";
 
 interface AmortizationTableProps {
   schedule: AmortizationRow[];
   periodLabel?: string;
 }
 
-export function AmortizationTable({ schedule, periodLabel = "Year" }: AmortizationTableProps) {
+export function AmortizationTable({
+  schedule,
+  periodLabel = "Year"
+}: AmortizationTableProps) {
   const [expanded, setExpanded] = useState(false);
   const displayRows = expanded ? schedule : schedule.slice(0, 5);
   const hasMore = schedule.length > 5;
@@ -15,29 +19,39 @@ export function AmortizationTable({ schedule, periodLabel = "Year" }: Amortizati
   if (schedule.length === 0) return null;
 
   return (
-    <div className="bg-cream rounded-2xl p-4 overflow-hidden">
-      <h3 className="text-sm font-semibold text-charcoal mb-3">Amortization Schedule</h3>
+    <div className="bg-cream overflow-hidden rounded-2xl p-4">
+      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+        Amortization Schedule
+      </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b-2 border-sand">
-              <th className="text-left py-2 px-2 text-slate font-medium">{periodLabel}</th>
-              <th className="text-right py-2 px-2 text-slate font-medium">Principal</th>
-              <th className="text-right py-2 px-2 text-slate font-medium">Interest</th>
-              <th className="text-right py-2 px-2 text-slate font-medium">Balance</th>
+            <tr className="border-sand border-b-2">
+              <th className="text-slate px-2 py-2 text-left font-medium">
+                {periodLabel}
+              </th>
+              <th className="text-slate px-2 py-2 text-right font-medium">
+                Principal
+              </th>
+              <th className="text-slate px-2 py-2 text-right font-medium">
+                Interest
+              </th>
+              <th className="text-slate px-2 py-2 text-right font-medium">
+                Balance
+              </th>
             </tr>
           </thead>
           <tbody>
             {displayRows.map((row) => (
-              <tr key={row.period} className="border-b border-sand/50">
-                <td className="py-2 px-2 text-charcoal">{row.period}</td>
-                <td className="py-2 px-2 text-right text-charcoal">
+              <tr key={row.period} className="border-sand/50 border-b">
+                <td className="text-charcoal px-2 py-2">{row.period}</td>
+                <td className="text-charcoal px-2 py-2 text-right">
                   {formatCurrency(row.principal)}
                 </td>
-                <td className="py-2 px-2 text-right text-slate">
+                <td className="text-slate px-2 py-2 text-right">
                   {formatCurrency(row.interest)}
                 </td>
-                <td className="py-2 px-2 text-right text-charcoal font-medium">
+                <td className="text-charcoal px-2 py-2 text-right font-medium">
                   {formatCurrency(row.balance)}
                 </td>
               </tr>
@@ -48,9 +62,11 @@ export function AmortizationTable({ schedule, periodLabel = "Year" }: Amortizati
       {hasMore && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="mt-3 text-sm text-terracotta hover:text-terracotta-dark font-medium transition-colors"
+          className="text-terracotta hover:text-terracotta-dark mt-3 text-sm font-medium transition-colors"
         >
-          {expanded ? "Show less" : `Show all ${schedule.length} ${periodLabel.toLowerCase()}s`}
+          {expanded
+            ? "Show less"
+            : `Show all ${schedule.length} ${periodLabel.toLowerCase()}s`}
         </button>
       )}
     </div>

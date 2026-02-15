@@ -3,22 +3,25 @@ export function formatCurrency(value: number): string {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(value);
 }
 
-export function formatCurrencyPrecise(value: number, currencyCode: string = "USD"): string {
+export function formatCurrencyPrecise(
+  value: number,
+  currencyCode: string = "USD"
+): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currencyCode,
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 2
   }).format(value);
 }
 
 const integerFormatter = new Intl.NumberFormat("en-US", {
   useGrouping: true,
-  maximumFractionDigits: 0,
+  maximumFractionDigits: 0
 });
 
 export function formatWithCommas(str: string): string {

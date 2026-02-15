@@ -1,5 +1,6 @@
-import { useState, useLayoutEffect, useRef, useId } from "react";
-import { formatWithCommas, parseFormattedNumber } from "../lib/format";
+import { useId, useLayoutEffect, useRef, useState } from "react";
+
+import { formatWithCommas, parseFormattedNumber } from "~/lib/format";
 
 export interface InputFieldProps {
   label: string;
@@ -26,7 +27,7 @@ export function InputField({
   decimals = 0,
   id,
   "aria-labelledby": ariaLabelledBy,
-  allowNegative = false,
+  allowNegative = false
 }: InputFieldProps) {
   const generatedId = useId();
   const inputId = id || generatedId;
@@ -35,7 +36,8 @@ export function InputField({
 
   const formatValue = (num: number): string => {
     const absValue = Math.abs(num);
-    const str = decimals > 0 ? absValue.toString() : Math.floor(absValue).toString();
+    const str =
+      decimals > 0 ? absValue.toString() : Math.floor(absValue).toString();
     const formatted = formatWithCommas(str);
     return num < 0 ? `-${formatted}` : formatted;
   };
@@ -49,7 +51,8 @@ export function InputField({
   useLayoutEffect(() => {
     if (!isFocused) {
       const absValue = Math.abs(value);
-      const str = decimals > 0 ? absValue.toString() : Math.floor(absValue).toString();
+      const str =
+        decimals > 0 ? absValue.toString() : Math.floor(absValue).toString();
       const formatted = formatWithCommas(str);
       const formattedValue = value < 0 ? `-${formatted}` : formatted;
       if (formattedValue !== displayValue) {
@@ -121,7 +124,12 @@ export function InputField({
     const numericValue = parseFormattedNumber(displayFormatted);
     let constrained = numericValue;
     if (max !== undefined && numericValue > max) constrained = max;
-    if (min !== undefined && numericValue < min && (!allowNegative || min !== 0)) constrained = min;
+    if (
+      min !== undefined &&
+      numericValue < min &&
+      (!allowNegative || min !== 0)
+    )
+      constrained = min;
     onChange(constrained);
   };
 
@@ -146,14 +154,14 @@ export function InputField({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-xs font-medium text-slate mb-1.5 tracking-wide uppercase"
+          className="text-slate mb-1.5 block text-xs font-medium tracking-wide uppercase"
         >
           {label}
         </label>
       )}
       <div className="relative">
         {prefix && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate">
+          <span className="text-slate absolute top-1/2 left-3 -translate-y-1/2">
             {prefix}
           </span>
         )}
@@ -167,17 +175,10 @@ export function InputField({
           onFocus={handleFocus}
           id={inputId}
           aria-labelledby={ariaLabelledBy}
-          className={`
-            w-full bg-cream border-2 border-sand rounded-xl py-3 text-base font-medium
-            text-charcoal placeholder:text-stone
-            focus:border-terracotta focus:bg-ivory
-            transition-all duration-200
-            ${prefix ? "pl-8" : "pl-3"}
-            ${suffix ? "pr-12" : "pr-3"}
-          `}
+          className={`bg-cream border-sand text-charcoal placeholder:text-stone focus:border-terracotta focus:bg-ivory w-full rounded-xl border-2 py-3 text-base font-medium transition-all duration-200 ${prefix ? "pl-8" : "pl-3"} ${suffix ? "pr-12" : "pr-3"} `}
         />
         {suffix && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate text-sm">
+          <span className="text-slate absolute top-1/2 right-3 -translate-y-1/2 text-sm">
             {suffix}
           </span>
         )}

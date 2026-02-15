@@ -1,26 +1,34 @@
-import { useState, useMemo, useCallback, useId, useEffect, useRef } from "react";
-import { Plus, X } from "lucide-react";
-import { InputField } from "../input-field";
-import { formatCurrency, formatCurrencyPrecise } from "../../lib/format";
-import { useFormattedInput } from "../../hooks/use-formatted-input";
 import {
-  calculateMortgage,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState
+} from "react";
+import { Plus, X } from "lucide-react";
+
+import { useFormattedInput } from "~/hooks/use-formatted-input";
+import {
   calculateLoanPayment,
   calculateLoanWithExtraPayments,
+  calculateMortgage,
   generateAmortizationSchedule,
   generateAmortizationScheduleWithExtra,
-  type ExtraPaymentType,
   type ExtraPaymentConfig,
-} from "../../lib/calculations";
-import { AmortizationTable } from "../amortization-table";
-import { BalanceChart, MortgageCostChart } from "../charts";
-import { useTheme } from "../theme-provider";
-import { ExportControls } from "../export-controls";
-import { exportMortgageCSV, exportMortgageExcel } from "../../lib/export";
-import { printMortgage } from "../../lib/print";
-import { ExtraPaymentSection } from "../extra-payment-section";
-import { EarlyPayoffSavings } from "../early-payoff-savings";
-import { PIBreakdown } from "../pi-breakdown";
+  type ExtraPaymentType
+} from "~/lib/calculations";
+import { exportMortgageCSV, exportMortgageExcel } from "~/lib/export";
+import { formatCurrency, formatCurrencyPrecise } from "~/lib/format";
+import { printMortgage } from "~/lib/print";
+import { AmortizationTable } from "~/components/amortization-table";
+import { BalanceChart, MortgageCostChart } from "~/components/charts";
+import { EarlyPayoffSavings } from "~/components/early-payoff-savings";
+import { ExportControls } from "~/components/export-controls";
+import { ExtraPaymentSection } from "~/components/extra-payment-section";
+import { InputField } from "~/components/input-field";
+import { PIBreakdown } from "~/components/pi-breakdown";
+import { useTheme } from "~/components/theme-provider";
 
 type InputMode = "dollar" | "percent";
 type Frequency = "monthly" | "yearly";
@@ -65,26 +73,26 @@ function ToggleInput({
   onChange,
   mode,
   onModeChange,
-  decimals = 0,
+  decimals = 0
 }: ToggleInputProps) {
   const id = useId();
   const effectiveDecimals = mode === "percent" ? 2 : decimals;
-  const { inputRef, displayValue, handleChange, handleBlur } = useFormattedInput(
-    value,
-    onChange,
-    effectiveDecimals
-  );
+  const { inputRef, displayValue, handleChange, handleBlur } =
+    useFormattedInput(value, onChange, effectiveDecimals);
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1.5">
-        <label htmlFor={id} className="block text-xs font-medium text-slate tracking-wide uppercase">
+      <div className="mb-1.5 flex items-center justify-between">
+        <label
+          htmlFor={id}
+          className="text-slate block text-xs font-medium tracking-wide uppercase"
+        >
           {label}
         </label>
-        <div className="flex bg-sand rounded-lg p-0.5">
+        <div className="bg-sand flex rounded-lg p-0.5">
           <button
             onClick={() => onModeChange("dollar")}
-            className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+            className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
               mode === "dollar"
                 ? "bg-charcoal text-ivory"
                 : "text-slate hover:text-charcoal"
@@ -94,7 +102,7 @@ function ToggleInput({
           </button>
           <button
             onClick={() => onModeChange("percent")}
-            className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
+            className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
               mode === "percent"
                 ? "bg-charcoal text-ivory"
                 : "text-slate hover:text-charcoal"
@@ -106,7 +114,9 @@ function ToggleInput({
       </div>
       <div className="relative">
         {mode === "dollar" && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate">$</span>
+          <span className="text-slate absolute top-1/2 left-3 -translate-y-1/2">
+            $
+          </span>
         )}
         <input
           ref={inputRef}
@@ -116,16 +126,12 @@ function ToggleInput({
           value={displayValue}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`
-            w-full bg-cream border-2 border-sand rounded-xl py-3 text-base font-medium
-            text-charcoal placeholder:text-stone
-            focus:border-terracotta focus:bg-ivory
-            transition-all duration-200
-            ${mode === "dollar" ? "pl-8 pr-3" : "pl-3 pr-8"}
-          `}
+          className={`bg-cream border-sand text-charcoal placeholder:text-stone focus:border-terracotta focus:bg-ivory w-full rounded-xl border-2 py-3 text-base font-medium transition-all duration-200 ${mode === "dollar" ? "pr-3 pl-8" : "pr-8 pl-3"} `}
         />
         {mode === "percent" && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate text-sm">%</span>
+          <span className="text-slate absolute top-1/2 right-3 -translate-y-1/2 text-sm">
+            %
+          </span>
         )}
       </div>
     </div>
@@ -139,17 +145,19 @@ interface CustomCostInputProps {
   onRemove: () => void;
 }
 
-function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInputProps) {
+function CustomCostInput({
+  cost,
+  homePrice,
+  onChange,
+  onRemove
+}: CustomCostInputProps) {
   const effectiveDecimals = cost.mode === "percent" ? 2 : 0;
   const handleValueUpdate = useCallback(
     (newValue: number) => onChange({ ...cost, value: newValue }),
     [cost, onChange]
   );
-  const { inputRef, displayValue, handleChange, handleBlur } = useFormattedInput(
-    cost.value,
-    handleValueUpdate,
-    effectiveDecimals
-  );
+  const { inputRef, displayValue, handleChange, handleBlur } =
+    useFormattedInput(cost.value, handleValueUpdate, effectiveDecimals);
 
   const handleModeChange = (mode: InputMode) => {
     let newValue = cost.value;
@@ -162,7 +170,7 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
   };
 
   return (
-    <div className="bg-cream rounded-xl p-3 space-y-2">
+    <div className="bg-cream space-y-2 rounded-xl p-3">
       <div className="flex items-center gap-2">
         <input
           type="text"
@@ -170,13 +178,13 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
           onChange={(e) => onChange({ ...cost, name: e.target.value })}
           placeholder="Cost name..."
           aria-label="Cost name"
-          className="flex-1 bg-transparent border-b border-sand text-sm text-charcoal placeholder:text-stone focus:border-terracotta focus:outline-none py-1"
+          className="border-sand text-charcoal placeholder:text-stone focus:border-terracotta flex-1 border-b bg-transparent py-1 text-sm focus:outline-none"
         />
         <button
           onClick={onRemove}
           aria-label={cost.name ? `Remove ${cost.name}` : "Remove cost"}
           title={cost.name ? `Remove ${cost.name}` : "Remove cost"}
-          className="p-1 text-slate hover:text-terracotta transition-colors rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
+          className="text-slate hover:text-terracotta focus-visible:ring-terracotta rounded p-1 transition-colors focus:outline-none focus-visible:ring-2"
         >
           <X size={14} />
         </button>
@@ -184,7 +192,9 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
           {cost.mode === "dollar" && (
-            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate text-sm">$</span>
+            <span className="text-slate absolute top-1/2 left-2 -translate-y-1/2 text-sm">
+              $
+            </span>
           )}
           <input
             ref={inputRef}
@@ -194,41 +204,49 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder="0"
-            className={`
-              w-full bg-ivory border border-sand rounded-lg py-2 text-sm font-medium
-              text-charcoal placeholder:text-stone
-              focus:border-terracotta focus:outline-none
-              ${cost.mode === "dollar" ? "pl-6 pr-2" : "pl-2 pr-6"}
-            `}
+            className={`bg-ivory border-sand text-charcoal placeholder:text-stone focus:border-terracotta w-full rounded-lg border py-2 text-sm font-medium focus:outline-none ${cost.mode === "dollar" ? "pr-2 pl-6" : "pr-6 pl-2"} `}
           />
           {cost.mode === "percent" && (
-            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate text-sm">%</span>
+            <span className="text-slate absolute top-1/2 right-2 -translate-y-1/2 text-sm">
+              %
+            </span>
           )}
         </div>
-        <div className="flex bg-sand rounded-md p-0.5">
+        <div className="bg-sand flex rounded-md p-0.5">
           <button
             onClick={() => handleModeChange("dollar")}
-            className={`px-2 py-1 text-xs font-medium rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
-              cost.mode === "dollar" ? "bg-charcoal text-ivory" : "text-slate hover:text-charcoal"
+            className={`focus-visible:ring-terracotta rounded px-2 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
+              cost.mode === "dollar"
+                ? "bg-charcoal text-ivory"
+                : "text-slate hover:text-charcoal"
             }`}
           >
             $
           </button>
           <button
             onClick={() => handleModeChange("percent")}
-            className={`px-2 py-1 text-xs font-medium rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
-              cost.mode === "percent" ? "bg-charcoal text-ivory" : "text-slate hover:text-charcoal"
+            className={`focus-visible:ring-terracotta rounded px-2 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
+              cost.mode === "percent"
+                ? "bg-charcoal text-ivory"
+                : "text-slate hover:text-charcoal"
             }`}
           >
             %
           </button>
         </div>
-        <div className="flex bg-sand rounded-md p-0.5">
+        <div className="bg-sand flex rounded-md p-0.5">
           <button
-            onClick={() => cost.mode !== "percent" && onChange({ ...cost, frequency: "monthly" })}
+            onClick={() =>
+              cost.mode !== "percent" &&
+              onChange({ ...cost, frequency: "monthly" })
+            }
             disabled={cost.mode === "percent"}
-            title={cost.mode === "percent" ? "Percent mode is always annual" : undefined}
-            className={`px-1.5 py-1 text-xs font-medium rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
+            title={
+              cost.mode === "percent"
+                ? "Percent mode is always annual"
+                : undefined
+            }
+            className={`focus-visible:ring-terracotta rounded px-1.5 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
               cost.mode === "percent"
                 ? "text-stone cursor-not-allowed"
                 : cost.frequency === "monthly"
@@ -239,10 +257,17 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
             /mo
           </button>
           <button
-            onClick={() => cost.mode !== "percent" && onChange({ ...cost, frequency: "yearly" })}
+            onClick={() =>
+              cost.mode !== "percent" &&
+              onChange({ ...cost, frequency: "yearly" })
+            }
             disabled={cost.mode === "percent"}
-            title={cost.mode === "percent" ? "Percent mode is always annual" : undefined}
-            className={`px-1.5 py-1 text-xs font-medium rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
+            title={
+              cost.mode === "percent"
+                ? "Percent mode is always annual"
+                : undefined
+            }
+            className={`focus-visible:ring-terracotta rounded px-1.5 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
               cost.mode === "percent"
                 ? "bg-charcoal/50 text-ivory/70 cursor-not-allowed"
                 : cost.frequency === "yearly"
@@ -274,7 +299,7 @@ export function MortgageCalculator() {
     extraPaymentType: "none",
     extraMonthly: 200,
     extraYearlyAmount: 2000,
-    extraYearlyMonth: 1,
+    extraYearlyMonth: 1
   });
 
   // Calculate actual dollar values based on mode
@@ -287,7 +312,9 @@ export function MortgageCalculator() {
 
   const downPaymentPercent = useMemo(() => {
     if (inputs.downPaymentMode === "dollar") {
-      return inputs.homePrice > 0 ? (inputs.downPaymentValue / inputs.homePrice) * 100 : 0;
+      return inputs.homePrice > 0
+        ? (inputs.downPaymentValue / inputs.homePrice) * 100
+        : 0;
     }
     return inputs.downPaymentValue;
   }, [inputs.downPaymentValue, inputs.downPaymentMode, inputs.homePrice]);
@@ -310,7 +337,15 @@ export function MortgageCalculator() {
         inputs.insurance,
         inputs.hoa
       ),
-    [inputs.homePrice, downPaymentDollars, inputs.rate, inputs.years, annualPropertyTax, inputs.insurance, inputs.hoa]
+    [
+      inputs.homePrice,
+      downPaymentDollars,
+      inputs.rate,
+      inputs.years,
+      annualPropertyTax,
+      inputs.insurance,
+      inputs.hoa
+    ]
   );
 
   const loanDetails = useMemo(
@@ -319,12 +354,20 @@ export function MortgageCalculator() {
   );
 
   // Extra payment configuration
-  const extraPaymentConfig: ExtraPaymentConfig = useMemo(() => ({
-    type: inputs.extraPaymentType,
-    extraMonthly: inputs.extraMonthly,
-    extraYearlyAmount: inputs.extraYearlyAmount,
-    extraYearlyMonth: inputs.extraYearlyMonth,
-  }), [inputs.extraPaymentType, inputs.extraMonthly, inputs.extraYearlyAmount, inputs.extraYearlyMonth]);
+  const extraPaymentConfig: ExtraPaymentConfig = useMemo(
+    () => ({
+      type: inputs.extraPaymentType,
+      extraMonthly: inputs.extraMonthly,
+      extraYearlyAmount: inputs.extraYearlyAmount,
+      extraYearlyMonth: inputs.extraYearlyMonth
+    }),
+    [
+      inputs.extraPaymentType,
+      inputs.extraMonthly,
+      inputs.extraYearlyAmount,
+      inputs.extraYearlyMonth
+    ]
+  );
 
   // Calculate mortgage with extra payments
   const extraPaymentResults = useMemo(() => {
@@ -335,40 +378,66 @@ export function MortgageCalculator() {
       inputs.years,
       extraPaymentConfig
     );
-  }, [results.loanAmount, inputs.rate, inputs.years, inputs.extraPaymentType, extraPaymentConfig]);
+  }, [
+    results.loanAmount,
+    inputs.rate,
+    inputs.years,
+    inputs.extraPaymentType,
+    extraPaymentConfig
+  ]);
 
-  const hasExtraPayments = extraPaymentResults !== null && inputs.extraPaymentType !== "none";
+  const hasExtraPayments =
+    extraPaymentResults !== null && inputs.extraPaymentType !== "none";
 
   // Calculate first month's principal vs interest split
   const firstMonthBreakdown = useMemo(() => {
     const monthlyRate = inputs.rate / 100 / 12;
     const firstMonthInterest = results.loanAmount * monthlyRate;
-    const firstMonthPrincipal = results.monthlyPrincipalInterest - firstMonthInterest;
+    const firstMonthPrincipal =
+      results.monthlyPrincipalInterest - firstMonthInterest;
 
     return {
       interest: firstMonthInterest,
       principal: firstMonthPrincipal,
-      interestPercent: results.monthlyPrincipalInterest > 0
-        ? (firstMonthInterest / results.monthlyPrincipalInterest) * 100
-        : 0,
-      principalPercent: results.monthlyPrincipalInterest > 0
-        ? (firstMonthPrincipal / results.monthlyPrincipalInterest) * 100
-        : 0,
+      interestPercent:
+        results.monthlyPrincipalInterest > 0
+          ? (firstMonthInterest / results.monthlyPrincipalInterest) * 100
+          : 0,
+      principalPercent:
+        results.monthlyPrincipalInterest > 0
+          ? (firstMonthPrincipal / results.monthlyPrincipalInterest) * 100
+          : 0
     };
   }, [results.loanAmount, inputs.rate, results.monthlyPrincipalInterest]);
 
   // Generate amortization schedule
   const amortizationSchedule = useMemo(() => {
     if (inputs.extraPaymentType !== "none") {
-      return generateAmortizationScheduleWithExtra(results.loanAmount, inputs.rate, inputs.years, extraPaymentConfig);
+      return generateAmortizationScheduleWithExtra(
+        results.loanAmount,
+        inputs.rate,
+        inputs.years,
+        extraPaymentConfig
+      );
     }
-    return generateAmortizationSchedule(results.loanAmount, inputs.rate, inputs.years);
-  }, [results.loanAmount, inputs.rate, inputs.years, inputs.extraPaymentType, extraPaymentConfig]);
+    return generateAmortizationSchedule(
+      results.loanAmount,
+      inputs.rate,
+      inputs.years
+    );
+  }, [
+    results.loanAmount,
+    inputs.rate,
+    inputs.years,
+    inputs.extraPaymentType,
+    extraPaymentConfig
+  ]);
 
   // Calculate actual term in years for total cost calculations
-  const actualTermYears = hasExtraPayments && extraPaymentResults
-    ? extraPaymentResults.actualMonths / 12
-    : inputs.years;
+  const actualTermYears =
+    hasExtraPayments && extraPaymentResults
+      ? extraPaymentResults.actualMonths / 12
+      : inputs.years;
 
   const totalPropertyTax = annualPropertyTax * actualTermYears;
   const totalInsurance = inputs.insurance * actualTermYears;
@@ -380,35 +449,45 @@ export function MortgageCalculator() {
       let monthlyDollars: number;
       if (cost.mode === "percent") {
         // Percent of home price, always interpreted as annual
-        monthlyDollars = (cost.value / 100) * inputs.homePrice / 12;
+        monthlyDollars = ((cost.value / 100) * inputs.homePrice) / 12;
       } else {
         // Dollar amount - convert yearly to monthly if needed
-        monthlyDollars = cost.frequency === "yearly" ? cost.value / 12 : cost.value;
+        monthlyDollars =
+          cost.frequency === "yearly" ? cost.value / 12 : cost.value;
       }
       return { ...cost, monthlyDollars };
     });
   }, [inputs.customCosts, inputs.homePrice]);
 
-  const totalCustomCostsMonthly = customCostsMonthly.reduce((sum, c) => sum + c.monthlyDollars, 0);
+  const totalCustomCostsMonthly = customCostsMonthly.reduce(
+    (sum, c) => sum + c.monthlyDollars,
+    0
+  );
   const totalCustomCosts = totalCustomCostsMonthly * 12 * actualTermYears;
 
   // Prepare custom costs for chart (total values over term)
-  const customCostsForChart = customCostsMonthly.map(c => ({
+  const customCostsForChart = customCostsMonthly.map((c) => ({
     name: c.name || "Other",
-    value: c.monthlyDollars * 12 * actualTermYears,
+    value: c.monthlyDollars * 12 * actualTermYears
   }));
 
   // Prepare custom costs for export/print (monthly values)
-  const customCostsForExport = customCostsMonthly.map(c => ({
+  const customCostsForExport = customCostsMonthly.map((c) => ({
     name: c.name || "Other",
-    monthlyAmount: c.monthlyDollars,
+    monthlyAmount: c.monthlyDollars
   }));
   const totalMonthlyWithExtras = results.totalMonthly + totalCustomCostsMonthly;
-  const loanTotalPayment = hasExtraPayments && extraPaymentResults
-    ? extraPaymentResults.actualTotalPayment
-    : loanDetails.totalPayment;
+  const loanTotalPayment =
+    hasExtraPayments && extraPaymentResults
+      ? extraPaymentResults.actualTotalPayment
+      : loanDetails.totalPayment;
   const totalCostOfOwnership =
-    loanTotalPayment + totalPropertyTax + totalInsurance + totalHoa + totalCustomCosts + downPaymentDollars;
+    loanTotalPayment +
+    totalPropertyTax +
+    totalInsurance +
+    totalHoa +
+    totalCustomCosts +
+    downPaymentDollars;
 
   const hasHoa = inputs.hoa > 0;
   const hasCustomCosts = inputs.customCosts.length > 0;
@@ -433,22 +512,27 @@ export function MortgageCalculator() {
       name: "",
       value: 0,
       mode: "dollar",
-      frequency: "monthly",
+      frequency: "monthly"
     };
-    setInputs((prev) => ({ ...prev, customCosts: [...prev.customCosts, newCost] }));
+    setInputs((prev) => ({
+      ...prev,
+      customCosts: [...prev.customCosts, newCost]
+    }));
   };
 
   const updateCustomCost = (updatedCost: CustomCost) => {
     setInputs((prev) => ({
       ...prev,
-      customCosts: prev.customCosts.map((c) => (c.id === updatedCost.id ? updatedCost : c)),
+      customCosts: prev.customCosts.map((c) =>
+        c.id === updatedCost.id ? updatedCost : c
+      )
     }));
   };
 
   const removeCustomCost = (id: string) => {
     setInputs((prev) => ({
       ...prev,
-      customCosts: prev.customCosts.filter((c) => c.id !== id),
+      customCosts: prev.customCosts.filter((c) => c.id !== id)
     }));
   };
 
@@ -467,9 +551,18 @@ export function MortgageCalculator() {
       totalMonthly: totalMonthlyWithExtras,
       totalCost: totalCostOfOwnership,
       totalInterest: loanDetails.totalInterest,
-      schedule: amortizationSchedule,
+      schedule: amortizationSchedule
     });
-  }, [inputs, results, downPaymentDollars, customCostsForExport, totalMonthlyWithExtras, totalCostOfOwnership, loanDetails.totalInterest, amortizationSchedule]);
+  }, [
+    inputs,
+    results,
+    downPaymentDollars,
+    customCostsForExport,
+    totalMonthlyWithExtras,
+    totalCostOfOwnership,
+    loanDetails.totalInterest,
+    amortizationSchedule
+  ]);
 
   const handleExportExcel = useCallback(() => {
     exportMortgageExcel({
@@ -486,31 +579,53 @@ export function MortgageCalculator() {
       totalMonthly: totalMonthlyWithExtras,
       totalCost: totalCostOfOwnership,
       totalInterest: loanDetails.totalInterest,
-      schedule: amortizationSchedule,
+      schedule: amortizationSchedule
     });
-  }, [inputs, results, downPaymentDollars, customCostsForExport, totalMonthlyWithExtras, totalCostOfOwnership, loanDetails.totalInterest, amortizationSchedule]);
+  }, [
+    inputs,
+    results,
+    downPaymentDollars,
+    customCostsForExport,
+    totalMonthlyWithExtras,
+    totalCostOfOwnership,
+    loanDetails.totalInterest,
+    amortizationSchedule
+  ]);
 
   const handlePrint = useCallback(() => {
-    printMortgage({
-      homePrice: inputs.homePrice,
-      downPayment: downPaymentDollars,
-      loanAmount: results.loanAmount,
-      rate: inputs.rate,
-      years: inputs.years,
-      monthlyPI: results.monthlyPrincipalInterest,
-      monthlyTax: results.monthlyPropertyTax,
-      monthlyInsurance: results.monthlyInsurance,
-      monthlyHOA: results.monthlyHoa,
-      customCosts: customCostsForExport,
-      totalMonthly: totalMonthlyWithExtras,
-      totalCost: totalCostOfOwnership,
-      totalInterest: loanDetails.totalInterest,
-      schedule: amortizationSchedule,
-    }, isDark);
-  }, [inputs, results, downPaymentDollars, customCostsForExport, totalMonthlyWithExtras, totalCostOfOwnership, loanDetails.totalInterest, amortizationSchedule, isDark]);
+    printMortgage(
+      {
+        homePrice: inputs.homePrice,
+        downPayment: downPaymentDollars,
+        loanAmount: results.loanAmount,
+        rate: inputs.rate,
+        years: inputs.years,
+        monthlyPI: results.monthlyPrincipalInterest,
+        monthlyTax: results.monthlyPropertyTax,
+        monthlyInsurance: results.monthlyInsurance,
+        monthlyHOA: results.monthlyHoa,
+        customCosts: customCostsForExport,
+        totalMonthly: totalMonthlyWithExtras,
+        totalCost: totalCostOfOwnership,
+        totalInterest: loanDetails.totalInterest,
+        schedule: amortizationSchedule
+      },
+      isDark
+    );
+  }, [
+    inputs,
+    results,
+    downPaymentDollars,
+    customCostsForExport,
+    totalMonthlyWithExtras,
+    totalCostOfOwnership,
+    loanDetails.totalInterest,
+    amortizationSchedule,
+    isDark
+  ]);
 
   return (
-    <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-8 h-full">
+    <div className="grid h-full gap-6 lg:grid-cols-2 xl:grid-cols-3 xl:gap-8">
       <div
         ref={liveRegionRef}
         role="status"
@@ -520,12 +635,16 @@ export function MortgageCalculator() {
       />
       {/* Column 1: Inputs */}
       <div className="space-y-4 lg:overflow-y-auto lg:pr-6 lg:pb-4">
-        <h2 className="text-base font-semibold text-charcoal">Property & Loan</h2>
+        <h2 className="text-charcoal text-base font-semibold">
+          Property & Loan
+        </h2>
         <div className="space-y-3">
           <InputField
             label="Home Price"
             value={inputs.homePrice}
-            onChange={(homePrice) => setInputs((prev) => ({ ...prev, homePrice }))}
+            onChange={(homePrice) =>
+              setInputs((prev) => ({ ...prev, homePrice }))
+            }
             prefix="$"
           />
           <ToggleInput
@@ -538,12 +657,25 @@ export function MortgageCalculator() {
             onModeChange={(downPaymentMode) =>
               setInputs((prev) => {
                 let newValue = prev.downPaymentValue;
-                if (downPaymentMode === "percent" && prev.downPaymentMode === "dollar") {
-                  newValue = prev.homePrice > 0 ? (prev.downPaymentValue / prev.homePrice) * 100 : 0;
-                } else if (downPaymentMode === "dollar" && prev.downPaymentMode === "percent") {
+                if (
+                  downPaymentMode === "percent" &&
+                  prev.downPaymentMode === "dollar"
+                ) {
+                  newValue =
+                    prev.homePrice > 0
+                      ? (prev.downPaymentValue / prev.homePrice) * 100
+                      : 0;
+                } else if (
+                  downPaymentMode === "dollar" &&
+                  prev.downPaymentMode === "percent"
+                ) {
                   newValue = (prev.downPaymentValue / 100) * prev.homePrice;
                 }
-                return { ...prev, downPaymentMode, downPaymentValue: Math.round(newValue * 100) / 100 };
+                return {
+                  ...prev,
+                  downPaymentMode,
+                  downPaymentValue: Math.round(newValue * 100) / 100
+                };
               })
             }
           />
@@ -567,8 +699,10 @@ export function MortgageCalculator() {
           </div>
         </div>
 
-        <div className="pt-3 border-t border-sand">
-          <h2 className="text-base font-semibold text-charcoal mb-3">Additional Costs</h2>
+        <div className="border-sand border-t pt-3">
+          <h2 className="text-charcoal mb-3 text-base font-semibold">
+            Additional Costs
+          </h2>
           <div className="space-y-3">
             <ToggleInput
               label="Property Tax / Year"
@@ -580,12 +714,25 @@ export function MortgageCalculator() {
               onModeChange={(propertyTaxMode) =>
                 setInputs((prev) => {
                   let newValue = prev.propertyTaxValue;
-                  if (propertyTaxMode === "percent" && prev.propertyTaxMode === "dollar") {
-                    newValue = prev.homePrice > 0 ? (prev.propertyTaxValue / prev.homePrice) * 100 : 0;
-                  } else if (propertyTaxMode === "dollar" && prev.propertyTaxMode === "percent") {
+                  if (
+                    propertyTaxMode === "percent" &&
+                    prev.propertyTaxMode === "dollar"
+                  ) {
+                    newValue =
+                      prev.homePrice > 0
+                        ? (prev.propertyTaxValue / prev.homePrice) * 100
+                        : 0;
+                  } else if (
+                    propertyTaxMode === "dollar" &&
+                    prev.propertyTaxMode === "percent"
+                  ) {
                     newValue = (prev.propertyTaxValue / 100) * prev.homePrice;
                   }
-                  return { ...prev, propertyTaxMode, propertyTaxValue: Math.round(newValue * 100) / 100 };
+                  return {
+                    ...prev,
+                    propertyTaxMode,
+                    propertyTaxValue: Math.round(newValue * 100) / 100
+                  };
                 })
               }
             />
@@ -593,7 +740,9 @@ export function MortgageCalculator() {
               <InputField
                 label="Insurance / Yr"
                 value={inputs.insurance}
-                onChange={(insurance) => setInputs((prev) => ({ ...prev, insurance }))}
+                onChange={(insurance) =>
+                  setInputs((prev) => ({ ...prev, insurance }))
+                }
                 prefix="$"
               />
               <InputField
@@ -621,7 +770,7 @@ export function MortgageCalculator() {
 
             <button
               onClick={addCustomCost}
-              className="flex items-center gap-1.5 text-sm text-terracotta hover:text-terracotta-dark font-medium transition-colors"
+              className="text-terracotta hover:text-terracotta-dark flex items-center gap-1.5 text-sm font-medium transition-colors"
             >
               <Plus size={16} />
               Add other cost
@@ -635,27 +784,37 @@ export function MortgageCalculator() {
           extraMonthly={inputs.extraMonthly}
           extraYearlyAmount={inputs.extraYearlyAmount}
           extraYearlyMonth={inputs.extraYearlyMonth}
-          onExtraPaymentTypeChange={(type) => setInputs((prev) => ({ ...prev, extraPaymentType: type }))}
-          onExtraMonthlyChange={(value) => setInputs((prev) => ({ ...prev, extraMonthly: value }))}
-          onExtraYearlyAmountChange={(value) => setInputs((prev) => ({ ...prev, extraYearlyAmount: value }))}
-          onExtraYearlyMonthChange={(month) => setInputs((prev) => ({ ...prev, extraYearlyMonth: month }))}
+          onExtraPaymentTypeChange={(type) =>
+            setInputs((prev) => ({ ...prev, extraPaymentType: type }))
+          }
+          onExtraMonthlyChange={(value) =>
+            setInputs((prev) => ({ ...prev, extraMonthly: value }))
+          }
+          onExtraYearlyAmountChange={(value) =>
+            setInputs((prev) => ({ ...prev, extraYearlyAmount: value }))
+          }
+          onExtraYearlyMonthChange={(month) =>
+            setInputs((prev) => ({ ...prev, extraYearlyMonth: month }))
+          }
           selectId="mortgage-extra-yearly-month"
         />
       </div>
 
       {/* Column 2: Results */}
-      <div className="lg:border-l lg:border-sand lg:pl-6 lg:overflow-y-auto lg:pb-4">
-        <h2 className="text-base font-semibold text-charcoal mb-4">Results</h2>
+      <div className="lg:border-sand lg:overflow-y-auto lg:border-l lg:pb-4 lg:pl-6">
+        <h2 className="text-charcoal mb-4 text-base font-semibold">Results</h2>
 
         {/* Primary Result Card */}
-        <div className="bg-terracotta rounded-2xl p-5 mb-4">
-          <p className="text-xs text-ivory/70 uppercase tracking-wide mb-1">
+        <div className="bg-terracotta mb-4 rounded-2xl p-5">
+          <p className="text-ivory/70 mb-1 text-xs tracking-wide uppercase">
             {hasCustomCosts ? "Total Monthly" : "Monthly Payment"}
           </p>
-          <p className="text-3xl font-serif text-ivory">
-            {formatCurrencyPrecise(hasCustomCosts ? totalMonthlyWithExtras : results.totalMonthly)}
+          <p className="text-ivory font-serif text-3xl">
+            {formatCurrencyPrecise(
+              hasCustomCosts ? totalMonthlyWithExtras : results.totalMonthly
+            )}
           </p>
-          <p className="text-xs text-ivory/60 mt-1">
+          <p className="text-ivory/60 mt-1 text-xs">
             P&I: {formatCurrencyPrecise(results.monthlyPrincipalInterest)}
           </p>
         </div>
@@ -669,25 +828,35 @@ export function MortgageCalculator() {
         />
 
         {/* Monthly Cost Breakdown */}
-        <div className="grid grid-cols-2 gap-2 mb-4">
+        <div className="mb-4 grid grid-cols-2 gap-2">
           <div className="bg-cream rounded-lg p-2.5">
-            <p className="text-xs text-slate">Tax</p>
-            <p className="text-sm font-medium text-charcoal">{formatCurrencyPrecise(results.monthlyPropertyTax)}</p>
+            <p className="text-slate text-xs">Tax</p>
+            <p className="text-charcoal text-sm font-medium">
+              {formatCurrencyPrecise(results.monthlyPropertyTax)}
+            </p>
           </div>
           <div className="bg-cream rounded-lg p-2.5">
-            <p className="text-xs text-slate">Insurance</p>
-            <p className="text-sm font-medium text-charcoal">{formatCurrencyPrecise(results.monthlyInsurance)}</p>
+            <p className="text-slate text-xs">Insurance</p>
+            <p className="text-charcoal text-sm font-medium">
+              {formatCurrencyPrecise(results.monthlyInsurance)}
+            </p>
           </div>
           {hasHoa && (
             <div className="bg-cream rounded-lg p-2.5">
-              <p className="text-xs text-slate">HOA</p>
-              <p className="text-sm font-medium text-charcoal">{formatCurrencyPrecise(results.monthlyHoa)}</p>
+              <p className="text-slate text-xs">HOA</p>
+              <p className="text-charcoal text-sm font-medium">
+                {formatCurrencyPrecise(results.monthlyHoa)}
+              </p>
             </div>
           )}
           {customCostsMonthly.map((cost) => (
             <div key={cost.id} className="bg-cream rounded-lg p-2.5">
-              <p className="text-xs text-slate truncate">{cost.name || "Other"}</p>
-              <p className="text-sm font-medium text-charcoal">{formatCurrencyPrecise(cost.monthlyDollars)}</p>
+              <p className="text-slate truncate text-xs">
+                {cost.name || "Other"}
+              </p>
+              <p className="text-charcoal text-sm font-medium">
+                {formatCurrencyPrecise(cost.monthlyDollars)}
+              </p>
             </div>
           ))}
         </div>
@@ -704,22 +873,28 @@ export function MortgageCalculator() {
 
         {/* Summary */}
         <div className="bg-cream rounded-xl p-4">
-          <h3 className="text-sm font-semibold text-charcoal mb-2">Summary</h3>
+          <h3 className="text-charcoal mb-2 text-sm font-semibold">Summary</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-slate">Loan Amount</span>
-              <span className="text-charcoal">{formatCurrency(results.loanAmount)}</span>
+              <span className="text-charcoal">
+                {formatCurrency(results.loanAmount)}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate">Down Payment</span>
-              <span className="text-charcoal">{formatCurrency(downPaymentDollars)} ({downPaymentPercent.toFixed(0)}%)</span>
+              <span className="text-charcoal">
+                {formatCurrency(downPaymentDollars)} (
+                {downPaymentPercent.toFixed(0)}%)
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate">Term</span>
               <span className="text-charcoal">
                 {hasExtraPayments && extraPaymentResults ? (
                   <>
-                    {Math.floor(extraPaymentResults.actualMonths / 12)} yr {extraPaymentResults.actualMonths % 12} mo
+                    {Math.floor(extraPaymentResults.actualMonths / 12)} yr{" "}
+                    {extraPaymentResults.actualMonths % 12} mo
                   </>
                 ) : (
                   <>{inputs.years} yrs</>
@@ -729,29 +904,45 @@ export function MortgageCalculator() {
             <div className="flex justify-between">
               <span className="text-slate">Total Interest</span>
               <span className="text-charcoal">
-                {formatCurrency(hasExtraPayments && extraPaymentResults ? extraPaymentResults.actualTotalInterest : loanDetails.totalInterest)}
+                {formatCurrency(
+                  hasExtraPayments && extraPaymentResults
+                    ? extraPaymentResults.actualTotalInterest
+                    : loanDetails.totalInterest
+                )}
               </span>
             </div>
-            <div className="flex justify-between pt-2 border-t border-sand">
-              <span className="font-semibold text-charcoal">Total Cost</span>
-              <span className="font-semibold text-charcoal">{formatCurrency(totalCostOfOwnership)}</span>
+            <div className="border-sand flex justify-between border-t pt-2">
+              <span className="text-charcoal font-semibold">Total Cost</span>
+              <span className="text-charcoal font-semibold">
+                {formatCurrency(totalCostOfOwnership)}
+              </span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Column 3: Visualizations */}
-      <div className="xl:border-l xl:border-sand xl:pl-6 lg:col-span-2 xl:col-span-1 lg:overflow-y-auto lg:pb-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold text-charcoal">Visualizations</h2>
-          <ExportControls onExportCSV={handleExportCSV} onExportExcel={handleExportExcel} onPrint={handlePrint} />
+      <div className="xl:border-sand lg:col-span-2 lg:overflow-y-auto lg:pb-4 xl:col-span-1 xl:border-l xl:pl-6">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-charcoal text-base font-semibold">
+            Visualizations
+          </h2>
+          <ExportControls
+            onExportCSV={handleExportCSV}
+            onExportExcel={handleExportExcel}
+            onPrint={handlePrint}
+          />
         </div>
 
         {amortizationSchedule.length > 0 && (
           <div className="space-y-4">
             <MortgageCostChart
               principal={results.loanAmount}
-              interest={hasExtraPayments && extraPaymentResults ? extraPaymentResults.actualTotalInterest : loanDetails.totalInterest}
+              interest={
+                hasExtraPayments && extraPaymentResults
+                  ? extraPaymentResults.actualTotalInterest
+                  : loanDetails.totalInterest
+              }
               tax={totalPropertyTax}
               insurance={totalInsurance}
               hoa={totalHoa}
@@ -763,7 +954,7 @@ export function MortgageCalculator() {
                 tax: results.monthlyPropertyTax,
                 insurance: results.monthlyInsurance,
                 hoa: results.monthlyHoa,
-                other: totalCustomCostsMonthly,
+                other: totalCustomCostsMonthly
               }}
             />
             <AmortizationTable schedule={amortizationSchedule} />

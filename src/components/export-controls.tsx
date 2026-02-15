@@ -1,12 +1,12 @@
-import { Download, Printer, FileSpreadsheet, FileText } from "lucide-react";
+import { Download, FileSpreadsheet, FileText, Printer } from "lucide-react";
 import { toast } from "sonner";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+  DropdownMenuTrigger
+} from "~/components/ui/dropdown-menu";
 
 interface ExportControlsProps {
   onExportCSV: () => void;
@@ -17,9 +17,12 @@ interface ExportControlsProps {
 export function ExportControls({
   onExportCSV,
   onExportExcel,
-  onPrint,
+  onPrint
 }: ExportControlsProps) {
-  const handleExport = async (action: () => void | Promise<void>, format: string) => {
+  const handleExport = async (
+    action: () => void | Promise<void>,
+    format: string
+  ) => {
     try {
       await action();
       toast.success(`${format} exported successfully`);
@@ -36,7 +39,9 @@ export function ExportControls({
           <Download size={16} aria-hidden="true" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => handleExport(onExportExcel, "Excel")}>
+          <DropdownMenuItem
+            onClick={() => handleExport(onExportExcel, "Excel")}
+          >
             <FileSpreadsheet size={14} aria-hidden="true" />
             Excel (.xlsx)
           </DropdownMenuItem>
@@ -52,12 +57,13 @@ export function ExportControls({
           try {
             onPrint();
           } catch (error) {
-            const message = error instanceof Error ? error.message : "Print failed";
+            const message =
+              error instanceof Error ? error.message : "Print failed";
             toast.error(message);
           }
         }}
         aria-label="Print or save as PDF"
-        className="p-1.5 text-slate hover:text-charcoal transition-colors rounded-lg"
+        className="text-slate hover:text-charcoal rounded-lg p-1.5 transition-colors"
       >
         <Printer size={16} aria-hidden="true" />
       </button>

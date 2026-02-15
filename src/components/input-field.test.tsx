@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { InputField } from "../components/input-field";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+
+import { InputField } from "~/components/input-field";
 
 describe("InputField", () => {
   it("renders with label", () => {
@@ -24,7 +25,14 @@ describe("InputField", () => {
 
   it("handles decimal input when decimals prop is set", () => {
     const handleChange = vi.fn();
-    render(<InputField label="Amount" value={100} onChange={handleChange} decimals={2} />);
+    render(
+      <InputField
+        label="Amount"
+        value={100}
+        onChange={handleChange}
+        decimals={2}
+      />
+    );
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "100.50" } });
     expect(handleChange).toHaveBeenCalledWith(100.5);
@@ -32,7 +40,14 @@ describe("InputField", () => {
 
   it("rejects decimals when decimals is 0", () => {
     const handleChange = vi.fn();
-    render(<InputField label="Amount" value={100} onChange={handleChange} decimals={0} />);
+    render(
+      <InputField
+        label="Amount"
+        value={100}
+        onChange={handleChange}
+        decimals={0}
+      />
+    );
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "100.50" } });
     expect(handleChange).toHaveBeenCalledWith(100);
@@ -40,7 +55,9 @@ describe("InputField", () => {
 
   it("enforces min constraint on blur", () => {
     const handleChange = vi.fn();
-    render(<InputField label="Amount" value={100} onChange={handleChange} min={10} />);
+    render(
+      <InputField label="Amount" value={100} onChange={handleChange} min={10} />
+    );
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "5" } });
     fireEvent.blur(input);
@@ -49,25 +66,44 @@ describe("InputField", () => {
 
   it("enforces max constraint during input", () => {
     const handleChange = vi.fn();
-    render(<InputField label="Amount" value={100} onChange={handleChange} max={1000} />);
+    render(
+      <InputField
+        label="Amount"
+        value={100}
+        onChange={handleChange}
+        max={1000}
+      />
+    );
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "2000" } });
     expect(handleChange).toHaveBeenCalledWith(1000);
   });
 
   it("displays prefix when provided", () => {
-    render(<InputField label="Price" value={100} onChange={() => {}} prefix="$" />);
+    render(
+      <InputField label="Price" value={100} onChange={() => {}} prefix="$" />
+    );
     expect(screen.getByText("$")).toBeInTheDocument();
   });
 
   it("displays suffix when provided", () => {
-    render(<InputField label="Rate" value={5} onChange={() => {}} suffix="%" />);
+    render(
+      <InputField label="Rate" value={5} onChange={() => {}} suffix="%" />
+    );
     expect(screen.getByText("%")).toBeInTheDocument();
   });
 
   it("handles negative numbers when allowNegative is true", () => {
     const handleChange = vi.fn();
-    render(<InputField label="Amount" value={100} onChange={handleChange} allowNegative min={-1000} />);
+    render(
+      <InputField
+        label="Amount"
+        value={100}
+        onChange={handleChange}
+        allowNegative
+        min={-1000}
+      />
+    );
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "-50" } });
     expect(handleChange).toHaveBeenCalled();
@@ -84,7 +120,9 @@ describe("InputField", () => {
   });
 
   it("uses provided id", () => {
-    render(<InputField label="Test" value={100} onChange={() => {}} id="custom-id" />);
+    render(
+      <InputField label="Test" value={100} onChange={() => {}} id="custom-id" />
+    );
     const input = screen.getByRole("textbox");
     expect(input).toHaveAttribute("id", "custom-id");
   });

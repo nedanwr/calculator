@@ -1,20 +1,21 @@
-import { useState, useId, useMemo, useEffect } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import {
-  AreaChart,
   Area,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
+  AreaChart,
   Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
 } from "recharts";
-import { formatCurrency } from "../lib/format";
-import type { AmortizationRow, InvestmentGrowthRow } from "../lib/calculations";
-import { useTheme } from "./theme-provider";
+
+import { useTheme } from "~/components/theme-provider";
+import type { AmortizationRow, InvestmentGrowthRow } from "~/lib/calculations";
+import { formatCurrency } from "~/lib/format";
 
 function useReducedMotion() {
   const [reducedMotion, setReducedMotion] = useState(() => {
@@ -24,7 +25,8 @@ function useReducedMotion() {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    const handleChange = (e: MediaQueryListEvent) =>
+      setReducedMotion(e.matches);
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
@@ -35,23 +37,26 @@ function useReducedMotion() {
 function useChartColors() {
   const { isDark } = useTheme();
 
-  return useMemo(() => ({
-    principal: isDark ? "#a8a29e" : "#2d2a26",
-    interest: "#c45d3e",
-    balance: "#7a9a7a",
-    contributions: isDark ? "#a8a29e" : "#2d2a26",
-    growth: "#c45d3e",
-    tax: "#6b8e6b",
-    insurance: "#8b7355",
-    hoa: "#d97b5d",
-    other: "#9cb89c",
-    text: isDark ? "#a8a29e" : "#6b6560",
-    axis: isDark ? "#44403c" : "#e8e4dc",
-    tooltip: {
-      bg: isDark ? "#292524" : "#faf8f5",
-      border: isDark ? "#44403c" : "#e8e4dc",
-    },
-  }), [isDark]);
+  return useMemo(
+    () => ({
+      principal: isDark ? "#a8a29e" : "#2d2a26",
+      interest: "#c45d3e",
+      balance: "#7a9a7a",
+      contributions: isDark ? "#a8a29e" : "#2d2a26",
+      growth: "#c45d3e",
+      tax: "#6b8e6b",
+      insurance: "#8b7355",
+      hoa: "#d97b5d",
+      other: "#9cb89c",
+      text: isDark ? "#a8a29e" : "#6b6560",
+      axis: isDark ? "#44403c" : "#e8e4dc",
+      tooltip: {
+        bg: isDark ? "#292524" : "#faf8f5",
+        border: isDark ? "#44403c" : "#e8e4dc"
+      }
+    }),
+    [isDark]
+  );
 }
 
 type ChartView = "balance" | "payments";
@@ -69,7 +74,11 @@ interface BalanceChartProps {
   monthlyCosts?: MonthlyCosts;
 }
 
-export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: BalanceChartProps) {
+export function BalanceChart({
+  schedule,
+  periodLabel = "Year",
+  monthlyCosts
+}: BalanceChartProps) {
   const [view, setView] = useState<ChartView>("balance");
   const COLORS = useChartColors();
   const reducedMotion = useReducedMotion();
@@ -79,17 +88,17 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
 
   if (schedule.length === 0) return null;
 
-  const hasMonthlyCosts = monthlyCosts && (
-    (monthlyCosts.tax && monthlyCosts.tax > 0) ||
-    (monthlyCosts.insurance && monthlyCosts.insurance > 0) ||
-    (monthlyCosts.hoa && monthlyCosts.hoa > 0) ||
-    (monthlyCosts.other && monthlyCosts.other > 0)
-  );
+  const hasMonthlyCosts =
+    monthlyCosts &&
+    ((monthlyCosts.tax && monthlyCosts.tax > 0) ||
+      (monthlyCosts.insurance && monthlyCosts.insurance > 0) ||
+      (monthlyCosts.hoa && monthlyCosts.hoa > 0) ||
+      (monthlyCosts.other && monthlyCosts.other > 0));
 
   const balanceData = schedule.map((row) => ({
     period: row.period,
     principal: row.totalPrincipal,
-    interest: row.totalInterest,
+    interest: row.totalInterest
   }));
 
   const paymentsData = schedule.map((row) => {
@@ -99,14 +108,19 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
     const result: Record<string, number> = {
       period: row.period,
       principal: row.totalPrincipal,
-      interest: row.totalInterest,
+      interest: row.totalInterest
     };
 
     if (hasMonthlyCosts) {
-      if (monthlyCosts.tax) result.tax = monthlyCosts.tax * monthsPerPeriod * periodsElapsed;
-      if (monthlyCosts.insurance) result.insurance = monthlyCosts.insurance * monthsPerPeriod * periodsElapsed;
-      if (monthlyCosts.hoa) result.hoa = monthlyCosts.hoa * monthsPerPeriod * periodsElapsed;
-      if (monthlyCosts.other) result.other = monthlyCosts.other * monthsPerPeriod * periodsElapsed;
+      if (monthlyCosts.tax)
+        result.tax = monthlyCosts.tax * monthsPerPeriod * periodsElapsed;
+      if (monthlyCosts.insurance)
+        result.insurance =
+          monthlyCosts.insurance * monthsPerPeriod * periodsElapsed;
+      if (monthlyCosts.hoa)
+        result.hoa = monthlyCosts.hoa * monthsPerPeriod * periodsElapsed;
+      if (monthlyCosts.other)
+        result.other = monthlyCosts.other * monthsPerPeriod * periodsElapsed;
     }
 
     return result;
@@ -114,29 +128,47 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
 
   const paymentLines = [
     { key: "principal", name: "Principal", color: COLORS.principal },
-    { key: "interest", name: "Interest", color: COLORS.interest },
+    { key: "interest", name: "Interest", color: COLORS.interest }
   ];
 
   if (hasMonthlyCosts) {
-    if (monthlyCosts?.tax) paymentLines.push({ key: "tax", name: "Property Tax", color: COLORS.tax });
-    if (monthlyCosts?.insurance) paymentLines.push({ key: "insurance", name: "Insurance", color: COLORS.insurance });
-    if (monthlyCosts?.hoa) paymentLines.push({ key: "hoa", name: "HOA", color: COLORS.hoa });
-    if (monthlyCosts?.other) paymentLines.push({ key: "other", name: "Other", color: COLORS.other });
+    if (monthlyCosts?.tax)
+      paymentLines.push({
+        key: "tax",
+        name: "Property Tax",
+        color: COLORS.tax
+      });
+    if (monthlyCosts?.insurance)
+      paymentLines.push({
+        key: "insurance",
+        name: "Insurance",
+        color: COLORS.insurance
+      });
+    if (monthlyCosts?.hoa)
+      paymentLines.push({ key: "hoa", name: "HOA", color: COLORS.hoa });
+    if (monthlyCosts?.other)
+      paymentLines.push({ key: "other", name: "Other", color: COLORS.other });
   }
 
   return (
     <div className="bg-cream rounded-2xl p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-charcoal">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-charcoal text-sm font-semibold">
           {view === "balance" ? "Principal & Interest" : "All Payments"}
         </h3>
-        <div role="group" aria-label="Chart view" className="flex bg-sand rounded-lg p-0.5">
+        <div
+          role="group"
+          aria-label="Chart view"
+          className="bg-sand flex rounded-lg p-0.5"
+        >
           <button
             type="button"
             onClick={() => setView("balance")}
             aria-pressed={view === "balance"}
-            className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
-              view === "balance" ? "bg-charcoal text-ivory" : "text-slate hover:text-charcoal"
+            className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
+              view === "balance"
+                ? "bg-charcoal text-ivory"
+                : "text-slate hover:text-charcoal"
             }`}
           >
             Balance
@@ -145,8 +177,10 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
             type="button"
             onClick={() => setView("payments")}
             aria-pressed={view === "payments"}
-            className={`px-2 py-1 text-xs font-medium rounded-md transition-all ${
-              view === "payments" ? "bg-charcoal text-ivory" : "text-slate hover:text-charcoal"
+            className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
+              view === "payments"
+                ? "bg-charcoal text-ivory"
+                : "text-slate hover:text-charcoal"
             }`}
           >
             Payments
@@ -157,15 +191,46 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           {view === "balance" ? (
-            <AreaChart data={balanceData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <AreaChart
+              data={balanceData}
+              margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+            >
               <defs>
-                <linearGradient id={principalGradientId} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={COLORS.principal} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={COLORS.principal} stopOpacity={0} />
+                <linearGradient
+                  id={principalGradientId}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="5%"
+                    stopColor={COLORS.principal}
+                    stopOpacity={0.3}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={COLORS.principal}
+                    stopOpacity={0}
+                  />
                 </linearGradient>
-                <linearGradient id={interestGradientId} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={COLORS.interest} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={COLORS.interest} stopOpacity={0} />
+                <linearGradient
+                  id={interestGradientId}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="5%"
+                    stopColor={COLORS.interest}
+                    stopOpacity={0.3}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={COLORS.interest}
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
               <XAxis
@@ -188,7 +253,7 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
                   backgroundColor: COLORS.tooltip.bg,
                   border: `1px solid ${COLORS.tooltip.border}`,
                   borderRadius: "8px",
-                  fontSize: "12px",
+                  fontSize: "12px"
                 }}
               />
               <Area
@@ -211,7 +276,10 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
               />
             </AreaChart>
           ) : (
-            <LineChart data={paymentsData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <LineChart
+              data={paymentsData}
+              margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+            >
               <XAxis
                 dataKey="period"
                 tick={{ fontSize: 11, fill: COLORS.text }}
@@ -232,7 +300,7 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
                   backgroundColor: COLORS.tooltip.bg,
                   border: `1px solid ${COLORS.tooltip.border}`,
                   borderRadius: "8px",
-                  fontSize: "12px",
+                  fontSize: "12px"
                 }}
               />
               {paymentLines.map((line) => (
@@ -253,23 +321,32 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
+      <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1">
         {view === "balance" ? (
           <>
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS.principal }} />
-              <span className="text-xs text-slate">Principal</span>
+              <div
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: COLORS.principal }}
+              />
+              <span className="text-slate text-xs">Principal</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS.interest }} />
-              <span className="text-xs text-slate">Interest</span>
+              <div
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: COLORS.interest }}
+              />
+              <span className="text-slate text-xs">Interest</span>
             </div>
           </>
         ) : (
           paymentLines.map((line) => (
             <div key={line.key} className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: line.color }} />
-              <span className="text-xs text-slate">{line.name}</span>
+              <div
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: line.color }}
+              />
+              <span className="text-slate text-xs">{line.name}</span>
             </div>
           ))
         )}
@@ -283,7 +360,10 @@ interface PaymentBreakdownChartProps {
   interest: number;
 }
 
-export function PaymentBreakdownChart({ principal, interest }: PaymentBreakdownChartProps) {
+export function PaymentBreakdownChart({
+  principal,
+  interest
+}: PaymentBreakdownChartProps) {
   const COLORS = useChartColors();
   const reducedMotion = useReducedMotion();
   const total = principal + interest;
@@ -291,7 +371,7 @@ export function PaymentBreakdownChart({ principal, interest }: PaymentBreakdownC
 
   const data = [
     { name: "Principal", value: principal, color: COLORS.principal },
-    { name: "Interest", value: interest, color: COLORS.interest },
+    { name: "Interest", value: interest, color: COLORS.interest }
   ];
 
   const principalPercent = ((principal / total) * 100).toFixed(0);
@@ -299,7 +379,9 @@ export function PaymentBreakdownChart({ principal, interest }: PaymentBreakdownC
 
   return (
     <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-sm font-semibold text-charcoal mb-3">Total Payment Breakdown</h3>
+      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+        Total Payment Breakdown
+      </h3>
       <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -323,20 +405,30 @@ export function PaymentBreakdownChart({ principal, interest }: PaymentBreakdownC
                 backgroundColor: COLORS.tooltip.bg,
                 border: `1px solid ${COLORS.tooltip.border}`,
                 borderRadius: "8px",
-                fontSize: "12px",
+                fontSize: "12px"
               }}
             />
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex justify-center gap-6 mt-2">
+      <div className="mt-2 flex justify-center gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.principal }} />
-          <span className="text-xs text-slate">Principal ({principalPercent}%)</span>
+          <div
+            className="h-3 w-3 rounded-full"
+            style={{ backgroundColor: COLORS.principal }}
+          />
+          <span className="text-slate text-xs">
+            Principal ({principalPercent}%)
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.interest }} />
-          <span className="text-xs text-slate">Interest ({interestPercent}%)</span>
+          <div
+            className="h-3 w-3 rounded-full"
+            style={{ backgroundColor: COLORS.interest }}
+          />
+          <span className="text-slate text-xs">
+            Interest ({interestPercent}%)
+          </span>
         </div>
       </div>
     </div>
@@ -347,7 +439,9 @@ interface InvestmentGrowthChartProps {
   schedule: InvestmentGrowthRow[];
 }
 
-export function InvestmentGrowthChart({ schedule }: InvestmentGrowthChartProps) {
+export function InvestmentGrowthChart({
+  schedule
+}: InvestmentGrowthChartProps) {
   const COLORS = useChartColors();
   const reducedMotion = useReducedMotion();
   const gradientId = useId();
@@ -358,23 +452,42 @@ export function InvestmentGrowthChart({ schedule }: InvestmentGrowthChartProps) 
   const data = schedule.map((row) => ({
     year: row.year,
     contributions: row.contributions,
-    total: row.balance,
+    total: row.balance
   }));
 
   return (
     <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-sm font-semibold text-charcoal mb-3">Growth Over Time</h3>
+      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+        Growth Over Time
+      </h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+          >
             <defs>
               <linearGradient id={totalGradientId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={COLORS.growth} stopOpacity={0.3} />
                 <stop offset="95%" stopColor={COLORS.growth} stopOpacity={0} />
               </linearGradient>
-              <linearGradient id={contribGradientId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={COLORS.contributions} stopOpacity={0.2} />
-                <stop offset="95%" stopColor={COLORS.contributions} stopOpacity={0} />
+              <linearGradient
+                id={contribGradientId}
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor={COLORS.contributions}
+                  stopOpacity={0.2}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={COLORS.contributions}
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <XAxis
@@ -397,7 +510,7 @@ export function InvestmentGrowthChart({ schedule }: InvestmentGrowthChartProps) 
                 backgroundColor: COLORS.tooltip.bg,
                 border: `1px solid ${COLORS.tooltip.border}`,
                 borderRadius: "8px",
-                fontSize: "12px",
+                fontSize: "12px"
               }}
             />
             <Area
@@ -421,14 +534,20 @@ export function InvestmentGrowthChart({ schedule }: InvestmentGrowthChartProps) 
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex justify-center gap-6 mt-2">
+      <div className="mt-2 flex justify-center gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.growth }} />
-          <span className="text-xs text-slate">Total Value</span>
+          <div
+            className="h-3 w-3 rounded-full"
+            style={{ backgroundColor: COLORS.growth }}
+          />
+          <span className="text-slate text-xs">Total Value</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.contributions }} />
-          <span className="text-xs text-slate">Contributions</span>
+          <div
+            className="h-3 w-3 rounded-full"
+            style={{ backgroundColor: COLORS.contributions }}
+          />
+          <span className="text-slate text-xs">Contributions</span>
         </div>
       </div>
     </div>
@@ -440,15 +559,22 @@ interface InvestmentBreakdownChartProps {
   interest: number;
 }
 
-export function InvestmentBreakdownChart({ contributions, interest }: InvestmentBreakdownChartProps) {
+export function InvestmentBreakdownChart({
+  contributions,
+  interest
+}: InvestmentBreakdownChartProps) {
   const COLORS = useChartColors();
   const reducedMotion = useReducedMotion();
   const total = contributions + interest;
   if (total === 0) return null;
 
   const data = [
-    { name: "Contributions", value: contributions, color: COLORS.contributions },
-    { name: "Interest Earned", value: interest, color: COLORS.growth },
+    {
+      name: "Contributions",
+      value: contributions,
+      color: COLORS.contributions
+    },
+    { name: "Interest Earned", value: interest, color: COLORS.growth }
   ];
 
   const contribPercent = ((contributions / total) * 100).toFixed(0);
@@ -456,7 +582,9 @@ export function InvestmentBreakdownChart({ contributions, interest }: Investment
 
   return (
     <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-sm font-semibold text-charcoal mb-3">Final Value Breakdown</h3>
+      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+        Final Value Breakdown
+      </h3>
       <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -480,20 +608,30 @@ export function InvestmentBreakdownChart({ contributions, interest }: Investment
                 backgroundColor: COLORS.tooltip.bg,
                 border: `1px solid ${COLORS.tooltip.border}`,
                 borderRadius: "8px",
-                fontSize: "12px",
+                fontSize: "12px"
               }}
             />
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex justify-center gap-6 mt-2">
+      <div className="mt-2 flex justify-center gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.contributions }} />
-          <span className="text-xs text-slate">Contributions ({contribPercent}%)</span>
+          <div
+            className="h-3 w-3 rounded-full"
+            style={{ backgroundColor: COLORS.contributions }}
+          />
+          <span className="text-slate text-xs">
+            Contributions ({contribPercent}%)
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.growth }} />
-          <span className="text-xs text-slate">Interest ({interestPercent}%)</span>
+          <div
+            className="h-3 w-3 rounded-full"
+            style={{ backgroundColor: COLORS.growth }}
+          />
+          <span className="text-slate text-xs">
+            Interest ({interestPercent}%)
+          </span>
         </div>
       </div>
     </div>
@@ -504,7 +642,9 @@ interface InvestmentStackedChartProps {
   schedule: InvestmentGrowthRow[];
 }
 
-export function InvestmentStackedChart({ schedule }: InvestmentStackedChartProps) {
+export function InvestmentStackedChart({
+  schedule
+}: InvestmentStackedChartProps) {
   const COLORS = useChartColors();
   const reducedMotion = useReducedMotion();
   const gradientId = useId();
@@ -515,21 +655,46 @@ export function InvestmentStackedChart({ schedule }: InvestmentStackedChartProps
   const data = schedule.map((row) => ({
     year: row.year,
     contributions: row.contributions,
-    interest: row.interest,
+    interest: row.interest
   }));
 
   return (
     <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-sm font-semibold text-charcoal mb-3">Contributions vs Interest</h3>
+      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+        Contributions vs Interest
+      </h3>
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+          >
             <defs>
-              <linearGradient id={contribStackGradientId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={COLORS.contributions} stopOpacity={0.3} />
-                <stop offset="95%" stopColor={COLORS.contributions} stopOpacity={0} />
+              <linearGradient
+                id={contribStackGradientId}
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor={COLORS.contributions}
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={COLORS.contributions}
+                  stopOpacity={0}
+                />
               </linearGradient>
-              <linearGradient id={interestStackGradientId} x1="0" y1="0" x2="0" y2="1">
+              <linearGradient
+                id={interestStackGradientId}
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
                 <stop offset="5%" stopColor={COLORS.growth} stopOpacity={0.3} />
                 <stop offset="95%" stopColor={COLORS.growth} stopOpacity={0} />
               </linearGradient>
@@ -554,7 +719,7 @@ export function InvestmentStackedChart({ schedule }: InvestmentStackedChartProps
                 backgroundColor: COLORS.tooltip.bg,
                 border: `1px solid ${COLORS.tooltip.border}`,
                 borderRadius: "8px",
-                fontSize: "12px",
+                fontSize: "12px"
               }}
             />
             <Area
@@ -580,14 +745,20 @@ export function InvestmentStackedChart({ schedule }: InvestmentStackedChartProps
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex justify-center gap-6 mt-2">
+      <div className="mt-2 flex justify-center gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.contributions }} />
-          <span className="text-xs text-slate">Contributions</span>
+          <div
+            className="h-3 w-3 rounded-full"
+            style={{ backgroundColor: COLORS.contributions }}
+          />
+          <span className="text-slate text-xs">Contributions</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.growth }} />
-          <span className="text-xs text-slate">Interest</span>
+          <div
+            className="h-3 w-3 rounded-full"
+            style={{ backgroundColor: COLORS.growth }}
+          />
+          <span className="text-slate text-xs">Interest</span>
         </div>
       </div>
     </div>
@@ -615,7 +786,7 @@ const CUSTOM_COST_COLORS = [
   "#a89090", // dusty rose
   "#8aa8b8", // steel blue
   "#b8a0c0", // lavender
-  "#c0b890", // olive
+  "#c0b890" // olive
 ];
 
 export function MortgageCostChart({
@@ -624,7 +795,7 @@ export function MortgageCostChart({
   tax,
   insurance,
   hoa = 0,
-  customCosts = [],
+  customCosts = []
 }: MortgageCostChartProps) {
   const COLORS = useChartColors();
   const reducedMotion = useReducedMotion();
@@ -639,17 +810,19 @@ export function MortgageCostChart({
     { name: "Insurance", value: insurance, color: COLORS.insurance },
     ...(hoa > 0 ? [{ name: "HOA", value: hoa, color: COLORS.hoa }] : []),
     ...customCosts
-      .filter(c => c.value > 0)
+      .filter((c) => c.value > 0)
       .map((c, idx) => ({
         name: c.name || "Other",
         value: c.value,
-        color: CUSTOM_COST_COLORS[idx % CUSTOM_COST_COLORS.length],
-      })),
+        color: CUSTOM_COST_COLORS[idx % CUSTOM_COST_COLORS.length]
+      }))
   ];
 
   return (
     <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-sm font-semibold text-charcoal mb-3">Total Cost Breakdown</h3>
+      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+        Total Cost Breakdown
+      </h3>
       <div className="h-48">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -673,17 +846,23 @@ export function MortgageCostChart({
                 backgroundColor: COLORS.tooltip.bg,
                 border: `1px solid ${COLORS.tooltip.border}`,
                 borderRadius: "8px",
-                fontSize: "12px",
+                fontSize: "12px"
               }}
             />
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2">
+      <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1">
         {data.map((item, index) => (
-          <div key={`${item.name}-${index}`} className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-            <span className="text-xs text-slate">
+          <div
+            key={`${item.name}-${index}`}
+            className="flex items-center gap-1.5"
+          >
+            <div
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: item.color }}
+            />
+            <span className="text-slate text-xs">
               {item.name} ({((item.value / total) * 100).toFixed(0)}%)
             </span>
           </div>

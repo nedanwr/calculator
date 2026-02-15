@@ -1,4 +1,4 @@
-import { formatCurrency } from "../lib/format";
+import { formatCurrency } from "~/lib/format";
 
 interface EarlyPayoffSavingsProps {
   monthsSaved: number;
@@ -11,7 +11,7 @@ export function EarlyPayoffSavings({
   monthsSaved,
   interestSaved,
   actualMonths,
-  originalYears,
+  originalYears
 }: EarlyPayoffSavingsProps) {
   if (monthsSaved <= 0) return null;
 
@@ -38,19 +38,29 @@ export function EarlyPayoffSavings({
   };
 
   return (
-    <div className="bg-sage/20 rounded-xl p-4 mb-4 border border-sage/30">
-      <h3 className="text-sm font-semibold text-charcoal mb-2">Early Payoff Savings</h3>
+    <div className="bg-sage/20 border-sage/30 mb-4 rounded-xl border p-4">
+      <h3 className="text-charcoal mb-2 text-sm font-semibold">
+        Early Payoff Savings
+      </h3>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <p className="text-xs text-slate uppercase tracking-wide">Time Saved</p>
-          <p className="text-base font-serif text-charcoal">{formatTimeSaved()}</p>
+          <p className="text-slate text-xs tracking-wide uppercase">
+            Time Saved
+          </p>
+          <p className="text-charcoal font-serif text-base">
+            {formatTimeSaved()}
+          </p>
         </div>
         <div>
-          <p className="text-xs text-slate uppercase tracking-wide">Interest Saved</p>
-          <p className="text-base font-serif text-charcoal">{formatCurrency(interestSaved)}</p>
+          <p className="text-slate text-xs tracking-wide uppercase">
+            Interest Saved
+          </p>
+          <p className="text-charcoal font-serif text-base">
+            {formatCurrency(interestSaved)}
+          </p>
         </div>
       </div>
-      <p className="text-xs text-slate mt-2">
+      <p className="text-slate mt-2 text-xs">
         Payoff: {formatActualTerm()} (vs {originalYears} yr)
       </p>
     </div>
