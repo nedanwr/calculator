@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { InputField } from "../input-field";
 import { formatCurrency, formatCurrencyPrecise } from "../../lib/format";
 import {
@@ -125,6 +125,28 @@ export function LoanCalculator() {
 
   const hasExtraPayments = extraPaymentResults !== null && inputs.extraPaymentType !== "none";
 
+  const liveRegionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const total = hasExtraPayments && extraPaymentResults
+      ? extraPaymentResults.actualTotalPayment
+      : results.totalPayment;
+
+    if (liveRegionRef.current) {
+      liveRegionRef.current.textContent = "";
+      setTimeout(() => {
+        if (liveRegionRef.current) {
+          const message = isBullet
+            ? `Bullet loan: Payment at maturity ${formatCurrency(bulletResults.finalPayment)}`
+            : isBalloon
+              ? `Interest only loan: Monthly interest ${formatCurrencyPrecise(results.monthlyPayment)}, balloon payment ${formatCurrency(balloonResults.balloonPayment)}`
+              : `Monthly payment ${formatCurrencyPrecise(results.monthlyPayment)}, total ${formatCurrency(total)}`;
+          liveRegionRef.current.textContent = message;
+        }
+      }, 100);
+    }
+  }, [results.monthlyPayment, results.totalPayment, isBullet, isBalloon, bulletResults, balloonResults, hasExtraPayments, extraPaymentResults]);
+
   // Generate amortization schedule for standard loans
   const amortizationSchedule = useMemo(() => {
     if (inputs.repaymentType !== "standard") return [];
@@ -234,6 +256,13 @@ export function LoanCalculator() {
 
   return (
     <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-8 h-full">
+      <div
+        ref={liveRegionRef}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      />
       {/* Column 1: Inputs */}
       <div className="space-y-4 lg:overflow-y-auto lg:pr-6 lg:pb-4">
         <h2 className="text-base font-semibold text-charcoal">Loan Details</h2>
