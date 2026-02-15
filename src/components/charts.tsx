@@ -1,4 +1,4 @@
-import { useState, useId, useMemo } from "react";
+import { useState, useId, useMemo, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -15,6 +15,22 @@ import {
 import { formatCurrency } from "../lib/format";
 import type { AmortizationRow, InvestmentGrowthRow } from "../lib/calculations";
 import { useTheme } from "./theme-provider";
+
+function useReducedMotion() {
+  const [reducedMotion, setReducedMotion] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  return reducedMotion;
+}
 
 function useChartColors() {
   const { isDark } = useTheme();
@@ -56,6 +72,7 @@ interface BalanceChartProps {
 export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: BalanceChartProps) {
   const [view, setView] = useState<ChartView>("balance");
   const COLORS = useChartColors();
+  const reducedMotion = useReducedMotion();
   const gradientId = useId();
   const principalGradientId = `principal${gradientId}`;
   const interestGradientId = `interest${gradientId}`;
@@ -181,6 +198,7 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
                 strokeWidth={2}
                 fill={`url(#${principalGradientId})`}
                 name="Principal Paid"
+                isAnimationActive={!reducedMotion}
               />
               <Area
                 type="monotone"
@@ -189,6 +207,7 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
                 strokeWidth={2}
                 fill={`url(#${interestGradientId})`}
                 name="Interest Paid"
+                isAnimationActive={!reducedMotion}
               />
             </AreaChart>
           ) : (
@@ -225,6 +244,7 @@ export function BalanceChart({ schedule, periodLabel = "Year", monthlyCosts }: B
                   strokeWidth={2}
                   dot={false}
                   name={line.name}
+                  isAnimationActive={!reducedMotion}
                 />
               ))}
             </LineChart>
@@ -265,6 +285,7 @@ interface PaymentBreakdownChartProps {
 
 export function PaymentBreakdownChart({ principal, interest }: PaymentBreakdownChartProps) {
   const COLORS = useChartColors();
+  const reducedMotion = useReducedMotion();
   const total = principal + interest;
   if (total === 0) return null;
 
@@ -290,6 +311,7 @@ export function PaymentBreakdownChart({ principal, interest }: PaymentBreakdownC
               outerRadius={70}
               paddingAngle={2}
               dataKey="value"
+              isAnimationActive={!reducedMotion}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -327,6 +349,7 @@ interface InvestmentGrowthChartProps {
 
 export function InvestmentGrowthChart({ schedule }: InvestmentGrowthChartProps) {
   const COLORS = useChartColors();
+  const reducedMotion = useReducedMotion();
   const gradientId = useId();
   const totalGradientId = `total${gradientId}`;
   const contribGradientId = `contrib${gradientId}`;
@@ -384,6 +407,7 @@ export function InvestmentGrowthChart({ schedule }: InvestmentGrowthChartProps) 
               strokeWidth={2}
               fill={`url(#${totalGradientId})`}
               name="Total Value"
+              isAnimationActive={!reducedMotion}
             />
             <Area
               type="monotone"
@@ -392,6 +416,7 @@ export function InvestmentGrowthChart({ schedule }: InvestmentGrowthChartProps) 
               strokeWidth={2}
               fill={`url(#${contribGradientId})`}
               name="Contributions"
+              isAnimationActive={!reducedMotion}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -417,6 +442,7 @@ interface InvestmentBreakdownChartProps {
 
 export function InvestmentBreakdownChart({ contributions, interest }: InvestmentBreakdownChartProps) {
   const COLORS = useChartColors();
+  const reducedMotion = useReducedMotion();
   const total = contributions + interest;
   if (total === 0) return null;
 
@@ -442,6 +468,7 @@ export function InvestmentBreakdownChart({ contributions, interest }: Investment
               outerRadius={70}
               paddingAngle={2}
               dataKey="value"
+              isAnimationActive={!reducedMotion}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -479,6 +506,7 @@ interface InvestmentStackedChartProps {
 
 export function InvestmentStackedChart({ schedule }: InvestmentStackedChartProps) {
   const COLORS = useChartColors();
+  const reducedMotion = useReducedMotion();
   const gradientId = useId();
   const contribStackGradientId = `contribStack${gradientId}`;
   const interestStackGradientId = `interestStack${gradientId}`;
@@ -537,6 +565,7 @@ export function InvestmentStackedChart({ schedule }: InvestmentStackedChartProps
               strokeWidth={2}
               fill={`url(#${contribStackGradientId})`}
               name="Contributions"
+              isAnimationActive={!reducedMotion}
             />
             <Area
               type="monotone"
@@ -546,6 +575,7 @@ export function InvestmentStackedChart({ schedule }: InvestmentStackedChartProps
               strokeWidth={2}
               fill={`url(#${interestStackGradientId})`}
               name="Interest"
+              isAnimationActive={!reducedMotion}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -597,6 +627,7 @@ export function MortgageCostChart({
   customCosts = [],
 }: MortgageCostChartProps) {
   const COLORS = useChartColors();
+  const reducedMotion = useReducedMotion();
   const customCostsTotal = customCosts.reduce((sum, c) => sum + c.value, 0);
   const total = principal + interest + tax + insurance + hoa + customCostsTotal;
   if (total === 0) return null;
@@ -630,6 +661,7 @@ export function MortgageCostChart({
               outerRadius={65}
               paddingAngle={2}
               dataKey="value"
+              isAnimationActive={!reducedMotion}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
