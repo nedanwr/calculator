@@ -111,11 +111,11 @@ export function CurrencyConverter() {
         aria-atomic="true"
         className="sr-only"
       />
-      <h2 className="text-charcoal font-serif text-xl">Currency Converter</h2>
+      <h2 className="text-foreground font-serif text-xl">Currency Converter</h2>
 
       <div className="flex items-start gap-3">
         <div className="flex-1 space-y-3">
-          <label className="text-slate mb-1.5 block text-xs font-medium tracking-wide whitespace-nowrap uppercase">
+          <label className="text-muted-foreground mb-1.5 block text-xs font-medium tracking-wide whitespace-nowrap uppercase">
             From
           </label>
           <CurrencySelector
@@ -136,7 +136,7 @@ export function CurrencyConverter() {
         {canSwap && (
           <button
             onClick={swapCurrencies}
-            className="bg-terracotta text-ivory hover:bg-charcoal mt-8 shrink-0 rounded-lg p-2 transition-all"
+            className="bg-destructive text-primary-foreground hover:destructive/80 mt-8 shrink-0 rounded-lg p-2 transition-all"
             aria-label="Swap currencies"
           >
             <ArrowRightLeft size={16} />
@@ -144,7 +144,7 @@ export function CurrencyConverter() {
         )}
 
         <div className="flex-1 space-y-3">
-          <label className="text-slate mb-1.5 block text-xs font-medium tracking-wide whitespace-nowrap uppercase">
+          <label className="text-muted-foreground mb-1.5 block text-xs font-medium tracking-wide whitespace-nowrap uppercase">
             To
           </label>
           <CurrencySelector
@@ -156,65 +156,65 @@ export function CurrencyConverter() {
       </div>
 
       {result.isLoading && (
-        <div className="bg-cream rounded-xl p-6 text-center">
-          <p className="text-slate">Converting...</p>
+        <div className="bg-secondary rounded-xl p-6 text-center">
+          <p className="text-muted-foreground">Converting...</p>
         </div>
       )}
 
       {result.error && (
-        <div className="bg-terracotta/10 border-terracotta/30 rounded-xl border p-6 text-center">
-          <p className="text-terracotta">{result.error}</p>
+        <div className="bg-destructive/10 border-destructive/30 rounded-xl border p-6 text-center">
+          <p className="text-destructive">{result.error}</p>
         </div>
       )}
 
       {!result.isLoading && !result.error && (
-        <div className="bg-terracotta rounded-2xl p-6">
-          <p className="text-ivory/70 mb-2 text-xs tracking-wide uppercase">
+        <div className="bg-destructive rounded-2xl p-6">
+          <p className="text-primary-foreground/70 mb-2 text-xs tracking-wide uppercase">
             Converted Amount
           </p>
-          <p className="text-ivory mb-2 font-serif text-4xl">
+          <p className="text-primary-foreground mb-2 font-serif text-4xl">
             {formatCurrencyPrecise(result.convertedAmount, toCurrency)}
           </p>
-          <p className="text-ivory/80 text-sm">
+          <p className="text-primary-foreground/80 text-sm">
             1 {fromCurrency} = {formatCurrencyPrecise(result.rate, toCurrency)}
           </p>
         </div>
       )}
 
       {!result.isLoading && !result.error && (
-        <div className="bg-cream rounded-xl p-4">
-          <h3 className="text-charcoal mb-2 text-sm font-semibold">
+        <div className="bg-secondary rounded-xl p-4">
+          <h3 className="text-foreground mb-2 text-sm font-semibold">
             Exchange Rate Details
           </h3>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-slate">Rate</span>
-              <span className="text-charcoal">
+              <span className="text-muted-foreground">Rate</span>
+              <span className="text-foreground">
                 1 {fromCurrency} = {result.rate.toFixed(6)} {toCurrency}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate">Inverse Rate</span>
-              <span className="text-charcoal">
+              <span className="text-muted-foreground">Inverse Rate</span>
+              <span className="text-foreground">
                 1 {toCurrency} ={" "}
                 {Number.isFinite(result.rate) && result.rate !== 0
                   ? `${(1 / result.rate).toFixed(6)} ${fromCurrency}`
                   : "N/A"}
               </span>
             </div>
-            <div className="border-sand flex justify-between border-t pt-2">
-              <span className="text-charcoal font-semibold">
+            <div className="border-border flex justify-between border-t pt-2">
+              <span className="text-foreground font-semibold">
                 Original Amount
               </span>
-              <span className="text-charcoal font-semibold">
+              <span className="text-foreground font-semibold">
                 {formatCurrencyPrecise(amount, fromCurrency)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-charcoal font-semibold">
+              <span className="text-foreground font-semibold">
                 Converted Amount
               </span>
-              <span className="text-charcoal font-semibold">
+              <span className="text-foreground font-semibold">
                 {formatCurrencyPrecise(result.convertedAmount, toCurrency)}
               </span>
             </div>

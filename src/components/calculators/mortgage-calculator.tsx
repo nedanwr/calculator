@@ -86,17 +86,17 @@ function ToggleInput({
       <div className="mb-1.5 flex items-center justify-between">
         <label
           htmlFor={id}
-          className="text-slate block text-xs font-medium tracking-wide uppercase"
+          className="text-muted-foreground block text-xs font-medium tracking-wide uppercase"
         >
           {label}
         </label>
-        <div className="bg-sand flex rounded-lg p-0.5">
+        <div className="bg-accent flex rounded-lg p-0.5">
           <button
             onClick={() => onModeChange("dollar")}
             className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
               mode === "dollar"
-                ? "bg-charcoal text-ivory"
-                : "text-slate hover:text-charcoal"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             $
@@ -105,8 +105,8 @@ function ToggleInput({
             onClick={() => onModeChange("percent")}
             className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
               mode === "percent"
-                ? "bg-charcoal text-ivory"
-                : "text-slate hover:text-charcoal"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             %
@@ -115,7 +115,7 @@ function ToggleInput({
       </div>
       <div className="relative">
         {mode === "dollar" && (
-          <span className="text-slate absolute top-1/2 left-3 -translate-y-1/2">
+          <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
             $
           </span>
         )}
@@ -127,10 +127,10 @@ function ToggleInput({
           value={displayValue}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`bg-cream border-sand text-charcoal placeholder:text-stone focus:border-terracotta focus:bg-ivory w-full rounded-xl border-2 py-3 text-base font-medium transition-all duration-200 ${mode === "dollar" ? "pr-3 pl-8" : "pr-8 pl-3"} `}
+          className={`bg-secondary border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:bg-card w-full rounded-xl border-2 py-3 text-base font-medium transition-all duration-200 ${mode === "dollar" ? "pr-3 pl-8" : "pr-8 pl-3"} `}
         />
         {mode === "percent" && (
-          <span className="text-slate absolute top-1/2 right-3 -translate-y-1/2 text-sm">
+          <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
             %
           </span>
         )}
@@ -171,7 +171,7 @@ function CustomCostInput({
   };
 
   return (
-    <div className="bg-cream space-y-2 rounded-xl p-3">
+    <div className="bg-secondary space-y-2 rounded-xl p-3">
       <div className="flex items-center gap-2">
         <input
           type="text"
@@ -179,13 +179,13 @@ function CustomCostInput({
           onChange={(e) => onChange({ ...cost, name: e.target.value })}
           placeholder="Cost name..."
           aria-label="Cost name"
-          className="border-sand text-charcoal placeholder:text-stone focus:border-terracotta flex-1 border-b bg-transparent py-1 text-sm focus:outline-none"
+          className="border-border text-foreground placeholder:text-muted-foreground focus:border-ring flex-1 border-b bg-transparent py-1 text-sm focus:outline-none"
         />
         <button
           onClick={onRemove}
           aria-label={cost.name ? `Remove ${cost.name}` : "Remove cost"}
           title={cost.name ? `Remove ${cost.name}` : "Remove cost"}
-          className="text-slate hover:text-terracotta focus-visible:ring-terracotta rounded p-1 transition-colors focus:outline-none focus-visible:ring-2"
+          className="text-muted-foreground hover:text-destructive focus-visible:ring-destructive rounded p-1 transition-colors focus:outline-none focus-visible:ring-2"
         >
           <X size={14} />
         </button>
@@ -193,7 +193,7 @@ function CustomCostInput({
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
           {cost.mode === "dollar" && (
-            <span className="text-slate absolute top-1/2 left-2 -translate-y-1/2 text-sm">
+            <span className="text-muted-foreground absolute top-1/2 left-2 -translate-y-1/2 text-sm">
               $
             </span>
           )}
@@ -205,37 +205,37 @@ function CustomCostInput({
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder="0"
-            className={`bg-ivory border-sand text-charcoal placeholder:text-stone focus:border-terracotta w-full rounded-lg border py-2 text-sm font-medium focus:outline-none ${cost.mode === "dollar" ? "pr-2 pl-6" : "pr-6 pl-2"} `}
+            className={`bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-ring w-full rounded-lg border py-2 text-sm font-medium focus:outline-none ${cost.mode === "dollar" ? "pr-2 pl-6" : "pr-6 pl-2"} `}
           />
           {cost.mode === "percent" && (
-            <span className="text-slate absolute top-1/2 right-2 -translate-y-1/2 text-sm">
+            <span className="text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 text-sm">
               %
             </span>
           )}
         </div>
-        <div className="bg-sand flex rounded-md p-0.5">
+        <div className="bg-accent flex rounded-md p-0.5">
           <button
             onClick={() => handleModeChange("dollar")}
-            className={`focus-visible:ring-terracotta rounded px-2 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
+            className={`focus-visible:ring-destructive rounded px-2 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
               cost.mode === "dollar"
-                ? "bg-charcoal text-ivory"
-                : "text-slate hover:text-charcoal"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             $
           </button>
           <button
             onClick={() => handleModeChange("percent")}
-            className={`focus-visible:ring-terracotta rounded px-2 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
+            className={`focus-visible:ring-destructive rounded px-2 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
               cost.mode === "percent"
-                ? "bg-charcoal text-ivory"
-                : "text-slate hover:text-charcoal"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             %
           </button>
         </div>
-        <div className="bg-sand flex rounded-md p-0.5">
+        <div className="bg-accent flex rounded-md p-0.5">
           <button
             onClick={() =>
               cost.mode !== "percent" &&
@@ -247,12 +247,12 @@ function CustomCostInput({
                 ? "Percent mode is always annual"
                 : undefined
             }
-            className={`focus-visible:ring-terracotta rounded px-1.5 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
+            className={`focus-visible:ring-destructive rounded px-1.5 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
               cost.mode === "percent"
-                ? "text-stone cursor-not-allowed"
+                ? "text-muted-foreground cursor-not-allowed"
                 : cost.frequency === "monthly"
-                  ? "bg-charcoal text-ivory"
-                  : "text-slate hover:text-charcoal"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
             }`}
           >
             /mo
@@ -268,12 +268,12 @@ function CustomCostInput({
                 ? "Percent mode is always annual"
                 : undefined
             }
-            className={`focus-visible:ring-terracotta rounded px-1.5 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
+            className={`focus-visible:ring-destructive rounded px-1.5 py-1 text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 ${
               cost.mode === "percent"
-                ? "bg-charcoal/50 text-ivory/70 cursor-not-allowed"
+                ? "bg-primary/50 text-primary-foreground/70 cursor-not-allowed"
                 : cost.frequency === "yearly"
-                  ? "bg-charcoal text-ivory"
-                  : "text-slate hover:text-charcoal"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
             }`}
           >
             /yr
@@ -303,7 +303,6 @@ export function MortgageCalculator() {
     extraYearlyMonth: 1
   });
 
-  // Calculate actual dollar values based on mode
   const downPaymentDollars = useMemo(() => {
     if (inputs.downPaymentMode === "percent") {
       return (inputs.downPaymentValue / 100) * inputs.homePrice;
@@ -354,7 +353,6 @@ export function MortgageCalculator() {
     [results.loanAmount, inputs.rate, inputs.years]
   );
 
-  // Extra payment configuration
   const extraPaymentConfig: ExtraPaymentConfig = useMemo(
     () => ({
       type: inputs.extraPaymentType,
@@ -370,7 +368,6 @@ export function MortgageCalculator() {
     ]
   );
 
-  // Calculate mortgage with extra payments
   const extraPaymentResults = useMemo(() => {
     if (inputs.extraPaymentType === "none") return null;
     return calculateLoanWithExtraPayments(
@@ -390,7 +387,6 @@ export function MortgageCalculator() {
   const hasExtraPayments =
     extraPaymentResults !== null && inputs.extraPaymentType !== "none";
 
-  // Calculate first month's principal vs interest split
   const firstMonthBreakdown = useMemo(() => {
     const monthlyRate = inputs.rate / 100 / 12;
     const firstMonthInterest = results.loanAmount * monthlyRate;
@@ -411,7 +407,6 @@ export function MortgageCalculator() {
     };
   }, [results.loanAmount, inputs.rate, results.monthlyPrincipalInterest]);
 
-  // Generate amortization schedule
   const amortizationSchedule = useMemo(() => {
     if (inputs.extraPaymentType !== "none") {
       return generateAmortizationScheduleWithExtra(
@@ -434,7 +429,6 @@ export function MortgageCalculator() {
     extraPaymentConfig
   ]);
 
-  // Calculate actual term in years for total cost calculations
   const actualTermYears =
     hasExtraPayments && extraPaymentResults
       ? extraPaymentResults.actualMonths / 12
@@ -444,15 +438,12 @@ export function MortgageCalculator() {
   const totalInsurance = inputs.insurance * actualTermYears;
   const totalHoa = inputs.hoa * 12 * actualTermYears;
 
-  // Calculate custom costs (convert % to $ based on home price)
   const customCostsMonthly = useMemo(() => {
     return inputs.customCosts.map((cost) => {
       let monthlyDollars: number;
       if (cost.mode === "percent") {
-        // Percent of home price, always interpreted as annual
         monthlyDollars = ((cost.value / 100) * inputs.homePrice) / 12;
       } else {
-        // Dollar amount - convert yearly to monthly if needed
         monthlyDollars =
           cost.frequency === "yearly" ? cost.value / 12 : cost.value;
       }
@@ -466,13 +457,11 @@ export function MortgageCalculator() {
   );
   const totalCustomCosts = totalCustomCostsMonthly * 12 * actualTermYears;
 
-  // Prepare custom costs for chart (total values over term)
   const customCostsForChart = customCostsMonthly.map((c) => ({
     name: c.name || "Other",
     value: c.monthlyDollars * 12 * actualTermYears
   }));
 
-  // Prepare custom costs for export/print (monthly values)
   const customCostsForExport = customCostsMonthly.map((c) => ({
     name: c.name || "Other",
     monthlyAmount: c.monthlyDollars
@@ -630,7 +619,7 @@ export function MortgageCalculator() {
   ]);
 
   return (
-    <div className="grid h-full gap-6 lg:grid-cols-2 xl:grid-cols-3 xl:gap-8">
+    <div className="grid h-full gap-8 lg:grid-cols-2 xl:grid-cols-3">
       <div
         ref={liveRegionRef}
         role="status"
@@ -639,8 +628,8 @@ export function MortgageCalculator() {
         className="sr-only"
       />
       {/* Column 1: Inputs */}
-      <div className="space-y-4 lg:overflow-y-auto lg:pr-6 lg:pb-4">
-        <h2 className="text-charcoal text-base font-semibold">
+      <div className="space-y-4 lg:overflow-y-auto lg:pr-4 lg:pb-4">
+        <h2 className="text-foreground text-base font-semibold">
           Property & Loan
         </h2>
         <div className="space-y-3">
@@ -704,8 +693,8 @@ export function MortgageCalculator() {
           </div>
         </div>
 
-        <div className="border-sand border-t pt-3">
-          <h2 className="text-charcoal mb-3 text-base font-semibold">
+        <div className="pt-4">
+          <h2 className="text-foreground mb-3 text-base font-semibold">
             Additional Costs
           </h2>
           <div className="space-y-3">
@@ -758,7 +747,6 @@ export function MortgageCalculator() {
               />
             </div>
 
-            {/* Custom Costs */}
             {inputs.customCosts.length > 0 && (
               <div className="space-y-2">
                 {inputs.customCosts.map((cost) => (
@@ -775,7 +763,7 @@ export function MortgageCalculator() {
 
             <button
               onClick={addCustomCost}
-              className="text-terracotta hover:text-terracotta-dark flex items-center gap-1.5 text-sm font-medium transition-colors"
+              className="text-destructive hover:destructive/80 flex items-center gap-1.5 text-sm font-medium transition-colors"
             >
               <Plus size={16} />
               Add other cost
@@ -783,7 +771,6 @@ export function MortgageCalculator() {
           </div>
         </div>
 
-        {/* Extra Payments */}
         <ExtraPaymentSection
           extraPaymentType={inputs.extraPaymentType}
           extraMonthly={inputs.extraMonthly}
@@ -806,25 +793,25 @@ export function MortgageCalculator() {
       </div>
 
       {/* Column 2: Results */}
-      <div className="lg:border-sand lg:overflow-y-auto lg:border-l lg:pb-4 lg:pl-6">
-        <h2 className="text-charcoal mb-4 text-base font-semibold">Results</h2>
+      <div className="lg:overflow-y-auto lg:pb-4">
+        <h2 className="text-foreground mb-4 text-base font-semibold">
+          Results
+        </h2>
 
-        {/* Primary Result Card */}
-        <div className="bg-terracotta mb-4 rounded-2xl p-5">
-          <p className="text-ivory/70 mb-1 text-xs tracking-wide uppercase">
+        <div className="bg-destructive mb-4 rounded-2xl p-5">
+          <p className="text-primary-foreground/70 mb-1 text-xs tracking-wide uppercase">
             {hasCustomCosts ? "Total Monthly" : "Monthly Payment"}
           </p>
-          <p className="text-ivory font-serif text-3xl">
+          <p className="text-primary-foreground font-serif text-3xl">
             {formatCurrencyPrecise(
               hasCustomCosts ? totalMonthlyWithExtras : results.totalMonthly
             )}
           </p>
-          <p className="text-ivory/60 mt-1 text-xs">
+          <p className="text-primary-foreground/60 mt-1 text-xs">
             P&I: {formatCurrencyPrecise(results.monthlyPrincipalInterest)}
           </p>
         </div>
 
-        {/* P&I Breakdown */}
         <PIBreakdown
           principal={firstMonthBreakdown.principal}
           interest={firstMonthBreakdown.interest}
@@ -832,41 +819,41 @@ export function MortgageCalculator() {
           interestPercent={firstMonthBreakdown.interestPercent}
         />
 
-        {/* Monthly Cost Breakdown */}
-        <div className="mb-4 grid grid-cols-2 gap-2">
-          <div className="bg-cream rounded-lg p-2.5">
-            <p className="text-slate text-xs">Tax</p>
-            <p className="text-charcoal text-sm font-medium">
-              {formatCurrencyPrecise(results.monthlyPropertyTax)}
-            </p>
-          </div>
-          <div className="bg-cream rounded-lg p-2.5">
-            <p className="text-slate text-xs">Insurance</p>
-            <p className="text-charcoal text-sm font-medium">
-              {formatCurrencyPrecise(results.monthlyInsurance)}
-            </p>
-          </div>
-          {hasHoa && (
-            <div className="bg-cream rounded-lg p-2.5">
-              <p className="text-slate text-xs">HOA</p>
-              <p className="text-charcoal text-sm font-medium">
-                {formatCurrencyPrecise(results.monthlyHoa)}
+        <div className="bg-secondary mb-4 rounded-xl p-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-muted-foreground text-xs">Tax</p>
+              <p className="text-foreground font-serif text-sm">
+                {formatCurrencyPrecise(results.monthlyPropertyTax)}
               </p>
             </div>
-          )}
-          {customCostsMonthly.map((cost) => (
-            <div key={cost.id} className="bg-cream rounded-lg p-2.5">
-              <p className="text-slate truncate text-xs">
-                {cost.name || "Other"}
-              </p>
-              <p className="text-charcoal text-sm font-medium">
-                {formatCurrencyPrecise(cost.monthlyDollars)}
+            <div>
+              <p className="text-muted-foreground text-xs">Insurance</p>
+              <p className="text-foreground font-serif text-sm">
+                {formatCurrencyPrecise(results.monthlyInsurance)}
               </p>
             </div>
-          ))}
+            {hasHoa && (
+              <div>
+                <p className="text-muted-foreground text-xs">HOA</p>
+                <p className="text-foreground font-serif text-sm">
+                  {formatCurrencyPrecise(results.monthlyHoa)}
+                </p>
+              </div>
+            )}
+            {customCostsMonthly.map((cost) => (
+              <div key={cost.id}>
+                <p className="text-muted-foreground truncate text-xs">
+                  {cost.name || "Other"}
+                </p>
+                <p className="text-foreground font-serif text-sm">
+                  {formatCurrencyPrecise(cost.monthlyDollars)}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Extra Payment Savings */}
         {hasExtraPayments && extraPaymentResults && (
           <EarlyPayoffSavings
             monthsSaved={extraPaymentResults.monthsSaved}
@@ -876,26 +863,27 @@ export function MortgageCalculator() {
           />
         )}
 
-        {/* Summary */}
-        <div className="bg-cream rounded-xl p-4">
-          <h3 className="text-charcoal mb-2 text-sm font-semibold">Summary</h3>
+        <div className="bg-secondary rounded-xl p-4">
+          <h3 className="text-foreground mb-2 text-sm font-semibold">
+            Summary
+          </h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-slate">Loan Amount</span>
-              <span className="text-charcoal">
+              <span className="text-muted-foreground">Loan Amount</span>
+              <span className="text-foreground">
                 {formatCurrency(results.loanAmount)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate">Down Payment</span>
-              <span className="text-charcoal">
+              <span className="text-muted-foreground">Down Payment</span>
+              <span className="text-foreground">
                 {formatCurrency(downPaymentDollars)} (
                 {downPaymentPercent.toFixed(0)}%)
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate">Term</span>
-              <span className="text-charcoal">
+              <span className="text-muted-foreground">Term</span>
+              <span className="text-foreground">
                 {hasExtraPayments && extraPaymentResults ? (
                   <>
                     {Math.floor(extraPaymentResults.actualMonths / 12)} yr{" "}
@@ -907,8 +895,8 @@ export function MortgageCalculator() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate">Total Interest</span>
-              <span className="text-charcoal">
+              <span className="text-muted-foreground">Total Interest</span>
+              <span className="text-foreground">
                 {formatCurrency(
                   hasExtraPayments && extraPaymentResults
                     ? extraPaymentResults.actualTotalInterest
@@ -916,9 +904,9 @@ export function MortgageCalculator() {
                 )}
               </span>
             </div>
-            <div className="border-sand flex justify-between border-t pt-2">
-              <span className="text-charcoal font-semibold">Total Cost</span>
-              <span className="text-charcoal font-semibold">
+            <div className="border-border flex justify-between border-t pt-2">
+              <span className="text-foreground font-semibold">Total Cost</span>
+              <span className="text-foreground font-semibold">
                 {formatCurrency(totalCostOfOwnership)}
               </span>
             </div>
@@ -927,9 +915,9 @@ export function MortgageCalculator() {
       </div>
 
       {/* Column 3: Visualizations */}
-      <div className="xl:border-sand lg:col-span-2 lg:overflow-y-auto lg:pb-4 xl:col-span-1 xl:border-l xl:pl-6">
+      <div className="lg:col-span-2 lg:overflow-y-auto lg:pb-4 xl:col-span-1">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-charcoal text-base font-semibold">
+          <h2 className="text-foreground text-base font-semibold">
             Visualizations
           </h2>
           <ExportControls

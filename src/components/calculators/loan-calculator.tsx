@@ -112,7 +112,6 @@ export function LoanCalculator() {
     inputs.gracePeriodType !== "none" &&
     inputs.gracePeriodMonths > 0;
 
-  // Extra payment configuration
   const extraPaymentConfig: ExtraPaymentConfig = useMemo(
     () => ({
       type: inputs.extraPaymentType,
@@ -128,7 +127,6 @@ export function LoanCalculator() {
     ]
   );
 
-  // Calculate loan with extra payments (for standard amortized loans only)
   const extraPaymentResults = useMemo(() => {
     if (
       inputs.repaymentType !== "standard" ||
@@ -186,14 +184,12 @@ export function LoanCalculator() {
     extraPaymentResults
   ]);
 
-  // Generate amortization schedule for standard loans
   const amortizationSchedule = useMemo(() => {
     if (inputs.repaymentType !== "standard") return [];
     const effectivePrincipal = hasGracePeriod
       ? standardResults.principalAfterGrace
       : inputs.principal;
 
-    // Use extra payment schedule if applicable
     if (!hasGracePeriod && inputs.extraPaymentType !== "none") {
       return generateAmortizationScheduleWithExtra(
         effectivePrincipal,
@@ -219,7 +215,6 @@ export function LoanCalculator() {
     extraPaymentConfig
   ]);
 
-  // Calculate first month's principal vs interest split (for amortized loans)
   const firstMonthBreakdown = useMemo(() => {
     if (inputs.repaymentType !== "standard") return null;
 
@@ -230,14 +225,12 @@ export function LoanCalculator() {
     const monthlyPayment = standardResults.monthlyPayment;
     const rawFirstMonthInterest = effectivePrincipal * monthlyRate;
 
-    // Cap interest at payment amount and principal at zero to handle edge cases
     const firstMonthInterest = Math.min(rawFirstMonthInterest, monthlyPayment);
     const firstMonthPrincipal = Math.max(
       monthlyPayment - firstMonthInterest,
       0
     );
 
-    // Guard against division by zero when monthlyPayment is <= 0
     const interestPercent =
       monthlyPayment > 0 ? (firstMonthInterest / monthlyPayment) * 100 : 0;
     const principalPercent =
@@ -373,7 +366,7 @@ export function LoanCalculator() {
   ]);
 
   return (
-    <div className="grid h-full gap-6 lg:grid-cols-2 xl:grid-cols-3 xl:gap-8">
+    <div className="grid h-full gap-8 lg:grid-cols-2 xl:grid-cols-3">
       <div
         ref={liveRegionRef}
         role="status"
@@ -382,8 +375,10 @@ export function LoanCalculator() {
         className="sr-only"
       />
       {/* Column 1: Inputs */}
-      <div className="space-y-4 lg:overflow-y-auto lg:pr-6 lg:pb-4">
-        <h2 className="text-charcoal text-base font-semibold">Loan Details</h2>
+      <div className="space-y-4 lg:overflow-y-auto lg:pr-4 lg:pb-4">
+        <h2 className="text-foreground text-base font-semibold">
+          Loan Details
+        </h2>
         <div className="space-y-3">
           <InputField
             label="Loan Amount"
@@ -413,7 +408,6 @@ export function LoanCalculator() {
           </div>
         </div>
 
-        {/* Repayment Type */}
         <ToggleGroup
           label="Repayment Type"
           options={repaymentOptions}
@@ -432,7 +426,6 @@ export function LoanCalculator() {
           descriptions={repaymentDescriptions}
         />
 
-        {/* Grace Period - only for standard loans */}
         {inputs.repaymentType === "standard" && (
           <>
             <ToggleGroup
@@ -466,7 +459,6 @@ export function LoanCalculator() {
           </>
         )}
 
-        {/* Extra Payments - only for standard loans without grace period */}
         {inputs.repaymentType === "standard" &&
           inputs.gracePeriodType === "none" && (
             <ExtraPaymentSection
@@ -492,39 +484,39 @@ export function LoanCalculator() {
       </div>
 
       {/* Column 2: Results */}
-      <div className="lg:border-sand lg:overflow-y-auto lg:border-l lg:pb-4 lg:pl-6">
-        <h2 className="text-charcoal mb-4 text-base font-semibold">Results</h2>
+      <div className="lg:overflow-y-auto lg:pb-4">
+        <h2 className="text-foreground mb-4 text-base font-semibold">
+          Results
+        </h2>
 
-        {/* Primary Result Card */}
         {isBullet ? (
-          <div className="bg-terracotta mb-4 rounded-2xl p-5">
-            <p className="text-ivory/70 mb-1 text-xs tracking-wide uppercase">
+          <div className="bg-destructive mb-4 rounded-2xl p-5">
+            <p className="text-primary-foreground/70 mb-1 text-xs tracking-wide uppercase">
               Payment at Maturity
             </p>
-            <p className="text-ivory font-serif text-3xl">
+            <p className="text-primary-foreground font-serif text-3xl">
               {formatCurrency(bulletResults.finalPayment)}
             </p>
-            <p className="text-ivory/60 mt-1 text-xs">
+            <p className="text-primary-foreground/60 mt-1 text-xs">
               After {inputs.years} years
             </p>
           </div>
         ) : (
-          <div className="bg-terracotta mb-4 rounded-2xl p-5">
-            <p className="text-ivory/70 mb-1 text-xs tracking-wide uppercase">
+          <div className="bg-destructive mb-4 rounded-2xl p-5">
+            <p className="text-primary-foreground/70 mb-1 text-xs tracking-wide uppercase">
               {isBalloon ? "Monthly Interest" : "Monthly Payment"}
             </p>
-            <p className="text-ivory font-serif text-3xl">
+            <p className="text-primary-foreground font-serif text-3xl">
               {formatCurrencyPrecise(results.monthlyPayment)}
             </p>
             {hasGracePeriod && (
-              <p className="text-ivory/60 mt-1 text-xs">
+              <p className="text-primary-foreground/60 mt-1 text-xs">
                 After {inputs.gracePeriodMonths}mo grace
               </p>
             )}
           </div>
         )}
 
-        {/* P&I Breakdown - for amortized loans */}
         {firstMonthBreakdown && inputs.repaymentType === "standard" && (
           <PIBreakdown
             principal={firstMonthBreakdown.principal}
@@ -534,56 +526,53 @@ export function LoanCalculator() {
           />
         )}
 
-        {/* Balloon/Bullet specific cards */}
         {isBalloon && (
-          <div className="bg-cream mb-4 rounded-xl p-4">
-            <p className="text-slate text-xs tracking-wide uppercase">
+          <div className="bg-secondary mb-4 rounded-xl p-4">
+            <p className="text-muted-foreground text-xs tracking-wide uppercase">
               Principal at Maturity
             </p>
-            <p className="text-charcoal font-serif text-xl">
+            <p className="text-foreground font-serif text-xl">
               {formatCurrency(balloonResults.balloonPayment)}
             </p>
           </div>
         )}
 
         {isBullet && (
-          <div className="bg-cream mb-4 rounded-xl p-4">
-            <p className="text-slate text-xs tracking-wide uppercase">
+          <div className="bg-secondary mb-4 rounded-xl p-4">
+            <p className="text-muted-foreground text-xs tracking-wide uppercase">
               Compounded Interest
             </p>
-            <p className="text-charcoal font-serif text-xl">
+            <p className="text-foreground font-serif text-xl">
               {formatCurrency(bulletResults.totalInterest)}
             </p>
           </div>
         )}
 
-        {/* Grace Period Info */}
         {hasGracePeriod && inputs.gracePeriodType === "interest_only" && (
-          <div className="bg-cream mb-4 rounded-xl p-4">
-            <p className="text-slate text-xs tracking-wide uppercase">
+          <div className="bg-secondary mb-4 rounded-xl p-4">
+            <p className="text-muted-foreground text-xs tracking-wide uppercase">
               During Grace
             </p>
-            <p className="text-charcoal font-serif text-xl">
+            <p className="text-foreground font-serif text-xl">
               {formatCurrencyPrecise(standardResults.gracePayment)}/mo
             </p>
           </div>
         )}
 
         {hasGracePeriod && inputs.gracePeriodType === "no_payment" && (
-          <div className="bg-cream mb-4 rounded-xl p-4">
-            <p className="text-slate text-xs tracking-wide uppercase">
+          <div className="bg-secondary mb-4 rounded-xl p-4">
+            <p className="text-muted-foreground text-xs tracking-wide uppercase">
               Balance After Grace
             </p>
-            <p className="text-charcoal font-serif text-xl">
+            <p className="text-foreground font-serif text-xl">
               {formatCurrency(standardResults.principalAfterGrace)}
             </p>
-            <p className="text-slate text-xs">
+            <p className="text-muted-foreground text-xs">
               +{formatCurrency(standardResults.graceInterest)} interest
             </p>
           </div>
         )}
 
-        {/* Extra Payment Savings */}
         {hasExtraPayments && extraPaymentResults && (
           <EarlyPayoffSavings
             monthsSaved={extraPaymentResults.monthsSaved}
@@ -593,28 +582,29 @@ export function LoanCalculator() {
           />
         )}
 
-        {/* Loan Summary */}
-        <div className="bg-cream rounded-xl p-4">
-          <h3 className="text-charcoal mb-2 text-sm font-semibold">Summary</h3>
+        <div className="bg-secondary rounded-xl p-4">
+          <h3 className="text-foreground mb-2 text-sm font-semibold">
+            Summary
+          </h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-slate">Principal</span>
-              <span className="text-charcoal">
+              <span className="text-muted-foreground">Principal</span>
+              <span className="text-foreground">
                 {formatCurrency(inputs.principal)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate">Rate</span>
-              <span className="text-charcoal">{inputs.rate}% APR</span>
+              <span className="text-muted-foreground">Rate</span>
+              <span className="text-foreground">{inputs.rate}% APR</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate">Term</span>
-              <span className="text-charcoal">
+              <span className="text-muted-foreground">Term</span>
+              <span className="text-foreground">
                 {hasExtraPayments && extraPaymentResults ? (
                   <>
                     {Math.floor(extraPaymentResults.actualMonths / 12)} yr{" "}
                     {extraPaymentResults.actualMonths % 12} mo
-                    <span className="text-slate ml-1">
+                    <span className="text-muted-foreground ml-1">
                       (vs {inputs.years} yr)
                     </span>
                   </>
@@ -624,8 +614,8 @@ export function LoanCalculator() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate">Total Interest</span>
-              <span className="text-charcoal">
+              <span className="text-muted-foreground">Total Interest</span>
+              <span className="text-foreground">
                 {formatCurrency(
                   hasExtraPayments && extraPaymentResults
                     ? extraPaymentResults.actualTotalInterest
@@ -633,9 +623,9 @@ export function LoanCalculator() {
                 )}
               </span>
             </div>
-            <div className="border-sand flex justify-between border-t pt-2">
-              <span className="text-charcoal font-semibold">Total Paid</span>
-              <span className="text-charcoal font-semibold">
+            <div className="border-border flex justify-between border-t pt-2">
+              <span className="text-foreground font-semibold">Total Paid</span>
+              <span className="text-foreground font-semibold">
                 {formatCurrency(
                   hasExtraPayments && extraPaymentResults
                     ? extraPaymentResults.actualTotalPayment
@@ -648,9 +638,9 @@ export function LoanCalculator() {
       </div>
 
       {/* Column 3: Visualizations */}
-      <div className="xl:border-sand lg:col-span-2 lg:overflow-y-auto lg:pb-4 xl:col-span-1 xl:border-l xl:pl-6">
+      <div className="lg:col-span-2 lg:overflow-y-auto lg:pb-4 xl:col-span-1">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-charcoal text-base font-semibold">
+          <h2 className="text-foreground text-base font-semibold">
             Visualizations
           </h2>
           <ExportControls
@@ -671,8 +661,8 @@ export function LoanCalculator() {
             <AmortizationTable schedule={amortizationSchedule} />
           </div>
         ) : (
-          <div className="bg-cream rounded-xl p-6 text-center">
-            <p className="text-slate text-sm">
+          <div className="bg-secondary rounded-xl p-6 text-center">
+            <p className="text-muted-foreground text-sm">
               {isBalloon
                 ? "Interest-only loans have no amortization schedule."
                 : "Bullet loans have no payment schedule."}
