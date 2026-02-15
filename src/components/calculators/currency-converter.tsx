@@ -1,10 +1,10 @@
 import { ArrowRightLeft } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { getExchangeRate } from "~/lib/currency";
-import { formatCurrencyPrecise } from "~/lib/format";
 import { CurrencySelector } from "~/components/currency-selector";
 import { InputField } from "~/components/input-field";
+import { getExchangeRate } from "~/lib/currency";
+import { formatCurrencyPrecise } from "~/lib/format";
 
 interface ConversionResult {
   convertedAmount: number;
