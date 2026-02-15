@@ -1,5 +1,6 @@
 import type { ExtraPaymentType } from "~/lib/calculations";
 import { InputField } from "./input-field";
+import { ToggleGroup } from "./toggle-group";
 
 interface ExtraPaymentSectionProps {
   extraPaymentType: ExtraPaymentType;
@@ -35,6 +36,13 @@ const EXTRA_PAYMENT_OPTIONS: { id: ExtraPaymentType; label: string }[] = [
   { id: "biweekly", label: "Biweekly" }
 ];
 
+const EXTRA_PAYMENT_DESCRIPTIONS: Record<ExtraPaymentType, string> = {
+  none: "",
+  extra_monthly: "Add extra to each monthly payment.",
+  extra_yearly: "Make one lump sum payment per year.",
+  biweekly: "26 biweekly payments = 13 monthly payments/year"
+};
+
 export function ExtraPaymentSection({
   extraPaymentType,
   extraMonthly,
@@ -47,25 +55,15 @@ export function ExtraPaymentSection({
   selectId = "extra-yearly-month"
 }: ExtraPaymentSectionProps) {
   return (
-    <div className="border-sand border-t pt-3">
-      <label className="text-slate mb-2 block text-xs font-medium tracking-wide uppercase">
-        Extra Payments
-      </label>
-      <div className="mb-2 grid grid-cols-2 gap-1.5">
-        {EXTRA_PAYMENT_OPTIONS.map((option) => (
-          <button
-            key={option.id}
-            onClick={() => onExtraPaymentTypeChange(option.id)}
-            className={`rounded-lg px-1.5 py-2 text-xs font-medium transition-all duration-200 ${
-              extraPaymentType === option.id
-                ? "bg-charcoal text-ivory"
-                : "bg-cream text-slate hover:text-charcoal border-sand border"
-            } `}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+    <>
+      <ToggleGroup
+        label="Extra Payments"
+        options={EXTRA_PAYMENT_OPTIONS}
+        selected={extraPaymentType}
+        onChange={onExtraPaymentTypeChange}
+        columns={2}
+        descriptions={EXTRA_PAYMENT_DESCRIPTIONS}
+      />
 
       {extraPaymentType === "extra_monthly" && (
         <div className="animate-fade-in">
@@ -110,12 +108,6 @@ export function ExtraPaymentSection({
           </div>
         </div>
       )}
-
-      {extraPaymentType === "biweekly" && (
-        <p className="text-slate mt-1 text-xs">
-          26 biweekly payments = 13 monthly payments/year
-        </p>
-      )}
-    </div>
+    </>
   );
 }
