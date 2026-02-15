@@ -113,7 +113,7 @@ function DropdownMenuCheckboxItem({
         "[&_svg]:pointer-events-none [&_svg]:shrink-0",
         className
       )}
-      checked={checked}
+      {...(checked !== undefined ? { checked } : {})}
       {...props}
     >
       <span className="absolute left-2 flex size-4 items-center justify-center">
