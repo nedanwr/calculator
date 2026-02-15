@@ -52,8 +52,8 @@ function ModeButton({ mode: m, isPressed, onClick, variant }: ModeButtonProps) {
       ? "flex items-center gap-1.5 py-2 px-4"
       : "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3";
   const stateStyles = isPressed
-    ? "bg-charcoal text-ivory shadow-md"
-    : "text-slate hover:text-charcoal";
+    ? "bg-primary text-primary-foreground shadow-md"
+    : "text-muted-foreground hover:text-foreground";
 
   return (
     <button
@@ -85,7 +85,7 @@ function ModeSwitcher({
     <div
       role="group"
       aria-label="Calculator type"
-      className={`bg-cream flex rounded-xl p-1 ${className}`}
+      className={`bg-secondary flex rounded-xl p-1 ${className}`}
     >
       {modes.map((m) => (
         <ModeButton
@@ -103,7 +103,7 @@ function ModeSwitcher({
 function LoadingFallback() {
   return (
     <div className="flex h-full min-h-[400px] items-center justify-center">
-      <div className="text-slate text-sm">Loading...</div>
+      <div className="text-muted-foreground text-sm">Loading...</div>
     </div>
   );
 }
@@ -118,11 +118,11 @@ function App() {
   }, []);
 
   return (
-    <div className="bg-ivory flex h-screen flex-col overflow-hidden">
+    <div className="bg-background flex h-screen flex-col overflow-hidden">
       <Toaster />
       <a
         href="#main-content"
-        className="focus:bg-charcoal focus:text-ivory sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:px-4 focus:py-2 focus:outline-none"
+        className="focus:bg-primary focus:text-primary-foreground sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:px-4 focus:py-2 focus:outline-none"
       >
         Skip to main content
       </a>
@@ -135,9 +135,9 @@ function App() {
       />
 
       {/* Header */}
-      <header className="border-sand relative flex shrink-0 items-center justify-between border-b px-6 py-4 lg:px-10">
+      <header className="border-border relative flex shrink-0 items-center justify-between border-b px-6 py-4 lg:px-10">
         <div className="flex items-center gap-8">
-          <h1 className="text-charcoal font-serif text-2xl md:text-3xl">
+          <h1 className="text-foreground font-serif text-2xl md:text-3xl">
             Finesse
           </h1>
           <ModeSwitcher
@@ -151,7 +151,7 @@ function App() {
       </header>
 
       {/* Mobile Mode Switcher */}
-      <div className="border-sand relative shrink-0 border-b px-4 py-3 sm:hidden">
+      <div className="border-border relative shrink-0 border-b px-4 py-3 sm:hidden">
         <ModeSwitcher
           currentMode={mode}
           onModeChange={handleModeChange}
