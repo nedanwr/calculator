@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  calculateAPR,
   calculateBalloonLoan,
   calculateBulletLoan,
   calculateInvestment,
@@ -320,5 +321,48 @@ describe("Edge cases and precision", () => {
   it("calculates correctly with decimal interest rate", () => {
     const result = calculateLoanPayment(100000, 5.5, 30);
     expect(result.monthlyPayment).toBeCloseTo(567.79, 2);
+  });
+});
+
+describe("calculateAPR", () => {
+  it("returns zeros for invalid inputs", () => {
+    expect(calculateAPR(0, 5, 30)).toEqual({ apr: 0, effectiveLoanAmount: 0 });
+    expect(calculateAPR(-100000, 5, 30)).toEqual({
+      apr: 0,
+      effectiveLoanAmount: 0
+    });
+    expect(calculateAPR(100000, 5, 0)).toEqual({
+      apr: 0,
+      effectiveLoanAmount: 0
+    });
+  });
+
+  it("returns nominal rate when no closing costs", () => {
+    const result = calculateAPR(100000, 6, 30, 0);
+    expect(result.apr).toBeCloseTo(6, 1);
+    expect(result.effectiveLoanAmount).toBe(100000);
+  });
+
+  it("calculates higher APR with closing costs", () => {
+    const result = calculateAPR(100000, 6, 30, 5000);
+    expect(result.apr).toBeGreaterThan(6);
+    expect(result.effectiveLoanAmount).toBe(95000);
+  });
+
+  it("APR increases with higher closing costs", () => {
+    const result1 = calculateAPR(100000, 6, 30, 2000);
+    const result2 = calculateAPR(100000, 6, 30, 5000);
+    expect(result2.apr).toBeGreaterThan(result1.apr);
+  });
+
+  it("APR is higher for shorter loan terms with same closing costs", () => {
+    const result15 = calculateAPR(100000, 6, 15, 5000);
+    const result30 = calculateAPR(100000, 6, 30, 5000);
+    expect(result15.apr).toBeGreaterThan(result30.apr);
+  });
+
+  it("returns nominal rate when closing costs exceed loan amount", () => {
+    const result = calculateAPR(100000, 6, 30, 150000);
+    expect(result.apr).toBe(6);
   });
 });
