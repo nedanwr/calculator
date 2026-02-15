@@ -7,10 +7,16 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "analyze": "ANALYZE=true vite build"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
