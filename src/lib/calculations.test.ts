@@ -130,11 +130,53 @@ describe("calculateMortgage", () => {
     expect(result.monthlyInsurance).toBe(200);
     expect(result.monthlyHoa).toBe(200);
     expect(result.totalMonthly).toBeCloseTo(2809.66, 2);
+    expect(result.pmiRequired).toBe(false);
+    expect(result.monthlyPmi).toBe(0);
   });
 
   it("handles zero down payment", () => {
     const result = calculateMortgage(500000, 0, 4, 30, 6000, 2400);
     expect(result.loanAmount).toBe(500000);
+  });
+
+  it("calculates PMI when down payment is less than 20%", () => {
+    const result = calculateMortgage(500000, 50000, 4, 30, 6000, 2400, 0, 0.5);
+    expect(result.ltv).toBe(90);
+    expect(result.pmiRequired).toBe(true);
+    expect(result.monthlyPmi).toBeCloseTo(187.5, 2);
+  });
+
+  it("does not charge PMI when down payment is exactly 20%", () => {
+    const result = calculateMortgage(500000, 100000, 4, 30, 6000, 2400, 0, 0.5);
+    expect(result.ltv).toBe(80);
+    expect(result.pmiRequired).toBe(false);
+    expect(result.monthlyPmi).toBe(0);
+  });
+
+  it("includes PMI in total monthly payment", () => {
+    const resultWithoutPmi = calculateMortgage(
+      500000,
+      100000,
+      4,
+      30,
+      6000,
+      2400,
+      0,
+      0.5
+    );
+    const resultWithPmi = calculateMortgage(
+      500000,
+      50000,
+      4,
+      30,
+      6000,
+      2400,
+      0,
+      0.5
+    );
+    expect(resultWithPmi.totalMonthly).toBeGreaterThan(
+      resultWithoutPmi.totalMonthly
+    );
   });
 });
 
