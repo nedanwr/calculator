@@ -175,9 +175,12 @@ export interface MortgageResult {
   monthlyPropertyTax: number;
   monthlyInsurance: number;
   monthlyHoa: number;
+  monthlyPmi: number;
   totalMonthly: number;
   loanAmount: number;
   totalCost: number;
+  ltv: number;
+  pmiRequired: boolean;
 }
 
 export interface InvestmentResult {
@@ -353,9 +356,13 @@ export function calculateMortgage(
   years: number,
   annualPropertyTax: number,
   annualInsurance: number,
-  monthlyHoa: number = 0
+  monthlyHoa: number = 0,
+  annualPmiRate: number = 0.5
 ): MortgageResult {
   const loanAmount = homePrice - downPayment;
+  const ltv = homePrice > 0 ? (loanAmount / homePrice) * 100 : 0;
+  const pmiRequired = ltv > 80;
+
   const { monthlyPayment } = calculateLoanPayment(
     loanAmount,
     annualRate,
@@ -363,18 +370,28 @@ export function calculateMortgage(
   );
   const monthlyPropertyTax = annualPropertyTax / 12;
   const monthlyInsurance = annualInsurance / 12;
+  const monthlyPmi = pmiRequired
+    ? (loanAmount * (annualPmiRate / 100)) / 12
+    : 0;
 
   const totalMonthly =
-    monthlyPayment + monthlyPropertyTax + monthlyInsurance + monthlyHoa;
+    monthlyPayment +
+    monthlyPropertyTax +
+    monthlyInsurance +
+    monthlyHoa +
+    monthlyPmi;
 
   return {
     monthlyPrincipalInterest: monthlyPayment,
     monthlyPropertyTax,
     monthlyInsurance,
     monthlyHoa,
+    monthlyPmi,
     totalMonthly,
     loanAmount,
-    totalCost: totalMonthly * years * 12
+    totalCost: totalMonthly * years * 12,
+    ltv,
+    pmiRequired
   };
 }
 
