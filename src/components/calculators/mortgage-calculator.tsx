@@ -29,6 +29,7 @@ import {
 import { exportMortgageCSV, exportMortgageExcel } from "~/lib/export";
 import { formatCurrency, formatCurrencyPrecise } from "~/lib/format";
 import { printMortgage } from "~/lib/print";
+import { generateUUID, sanitizeText } from "~/lib/utils";
 
 type InputMode = "dollar" | "percent";
 type Frequency = "monthly" | "yearly";
@@ -508,7 +509,7 @@ export function MortgageCalculator() {
 
   const addCustomCost = () => {
     const newCost: CustomCost = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       name: "",
       value: 0,
       mode: "dollar",
@@ -521,10 +522,14 @@ export function MortgageCalculator() {
   };
 
   const updateCustomCost = (updatedCost: CustomCost) => {
+    const sanitizedCost = {
+      ...updatedCost,
+      name: sanitizeText(updatedCost.name)
+    };
     setInputs((prev) => ({
       ...prev,
       customCosts: prev.customCosts.map((c) =>
-        c.id === updatedCost.id ? updatedCost : c
+        c.id === sanitizedCost.id ? sanitizedCost : c
       )
     }));
   };
