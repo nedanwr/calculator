@@ -378,6 +378,62 @@ export function calculateMortgage(
   };
 }
 
+export interface APRResult {
+  apr: number;
+  effectiveLoanAmount: number;
+}
+
+export function calculateAPR(
+  loanAmount: number,
+  annualRate: number,
+  years: number,
+  closingCosts: number = 0
+): APRResult {
+  if (loanAmount <= 0 || years <= 0) {
+    return { apr: 0, effectiveLoanAmount: 0 };
+  }
+
+  const effectiveLoanAmount = loanAmount - closingCosts;
+  if (effectiveLoanAmount <= 0) {
+    return { apr: annualRate, effectiveLoanAmount };
+  }
+
+  const numPayments = years * 12;
+  const monthlyPayment = calculateMonthlyPayment(
+    loanAmount,
+    annualRate / 100 / 12,
+    numPayments
+  );
+
+  let lowRate = 0;
+  let highRate = annualRate * 2;
+  let apr = annualRate;
+
+  for (let i = 0; i < 100; i++) {
+    const midRate = (lowRate + highRate) / 2;
+    const monthlyMidRate = midRate / 100 / 12;
+
+    let presentValue = 0;
+    for (let n = 1; n <= numPayments; n++) {
+      presentValue += monthlyPayment / Math.pow(1 + monthlyMidRate, n);
+    }
+
+    if (Math.abs(presentValue - effectiveLoanAmount) < 0.01) {
+      apr = midRate;
+      break;
+    }
+
+    if (presentValue > effectiveLoanAmount) {
+      lowRate = midRate;
+    } else {
+      highRate = midRate;
+    }
+    apr = midRate;
+  }
+
+  return { apr, effectiveLoanAmount };
+}
+
 export function calculateInvestment(
   initial: number,
   monthly: number,
