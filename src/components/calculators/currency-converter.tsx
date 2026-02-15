@@ -13,6 +13,19 @@ interface ConversionResult {
   error: string | null;
 }
 
+function formatMoney(amount: number, currency: string) {
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  } catch {
+    return `${currency} ${amount.toFixed(2)}`;
+  }
+}
+
 export function CurrencyConverter() {
   const [fromCurrency, setFromCurrency] = useState("USD");
   const [toCurrency, setToCurrency] = useState("EUR");
@@ -24,6 +37,7 @@ export function CurrencyConverter() {
     error: null,
   });
   const requestIdRef = useRef(0);
+  const liveRegionRef = useRef<HTMLDivElement>(null);
 
   const performConversion = useCallback(async () => {
     const currentRequestId = ++requestIdRef.current;
@@ -66,10 +80,29 @@ export function CurrencyConverter() {
     return () => clearTimeout(timer);
   }, [performConversion]);
 
+  useEffect(() => {
+    if (!result.isLoading && !result.error && liveRegionRef.current) {
+      liveRegionRef.current.textContent = "";
+      setTimeout(() => {
+        if (liveRegionRef.current) {
+          const message = `${formatMoney(amount, fromCurrency)} equals ${formatMoney(result.convertedAmount, toCurrency)} at rate ${result.rate.toFixed(4)}`;
+          liveRegionRef.current.textContent = message;
+        }
+      }, 100);
+    }
+  }, [result.convertedAmount, result.rate, result.isLoading, result.error, amount, fromCurrency, toCurrency]);
+
   const canSwap = fromCurrency !== toCurrency;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
+      <div
+        ref={liveRegionRef}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      />
       <h2 className="text-xl font-serif text-charcoal">Currency Converter</h2>
 
       <div className="flex items-start gap-3">
