@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useId } from "react";
+import { useState, useMemo, useCallback, useId, useEffect, useRef } from "react";
 import { Plus, X } from "lucide-react";
 import { InputField } from "../input-field";
 import { formatCurrency, formatCurrencyPrecise } from "../../lib/format";
@@ -413,6 +413,20 @@ export function MortgageCalculator() {
   const hasHoa = inputs.hoa > 0;
   const hasCustomCosts = inputs.customCosts.length > 0;
 
+  const liveRegionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (liveRegionRef.current) {
+      liveRegionRef.current.textContent = "";
+      setTimeout(() => {
+        if (liveRegionRef.current) {
+          const message = `Monthly payment ${formatCurrencyPrecise(results.totalMonthly)}, total cost ${formatCurrency(totalCostOfOwnership)}`;
+          liveRegionRef.current.textContent = message;
+        }
+      }, 100);
+    }
+  }, [results.totalMonthly, totalCostOfOwnership]);
+
   const addCustomCost = () => {
     const newCost: CustomCost = {
       id: crypto.randomUUID(),
@@ -497,6 +511,13 @@ export function MortgageCalculator() {
 
   return (
     <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-8 h-full">
+      <div
+        ref={liveRegionRef}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      />
       {/* Column 1: Inputs */}
       <div className="space-y-4 lg:overflow-y-auto lg:pr-6 lg:pb-4">
         <h2 className="text-base font-semibold text-charcoal">Property & Loan</h2>
