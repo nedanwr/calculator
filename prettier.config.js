@@ -9,5 +9,5 @@ export default {
   arrowParens: "always",
   bracketSpacing: true,
   bracketSameLine: false,
-  plugins: ["prettier-plugin-tailwindcss"],
+  plugins: ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"]
 };
