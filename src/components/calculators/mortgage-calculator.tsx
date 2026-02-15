@@ -18,6 +18,7 @@ import { PIBreakdown } from "~/components/pi-breakdown";
 import { useTheme } from "~/components/theme-provider";
 import { useFormattedInput } from "~/hooks/use-formatted-input";
 import {
+  calculateAPR,
   calculateLoanPayment,
   calculateLoanWithExtraPayments,
   calculateMortgage,
@@ -48,6 +49,7 @@ interface MortgageInputs {
   downPaymentMode: InputMode;
   rate: number;
   years: number;
+  closingCosts: number;
   propertyTaxValue: number;
   propertyTaxMode: InputMode;
   insurance: number;
@@ -292,6 +294,7 @@ export function MortgageCalculator() {
     downPaymentMode: "percent",
     rate: 6.5,
     years: 30,
+    closingCosts: 5000,
     propertyTaxValue: 1.2,
     propertyTaxMode: "percent",
     insurance: 1800,
@@ -351,6 +354,17 @@ export function MortgageCalculator() {
   const loanDetails = useMemo(
     () => calculateLoanPayment(results.loanAmount, inputs.rate, inputs.years),
     [results.loanAmount, inputs.rate, inputs.years]
+  );
+
+  const aprResult = useMemo(
+    () =>
+      calculateAPR(
+        results.loanAmount,
+        inputs.rate,
+        inputs.years,
+        inputs.closingCosts
+      ),
+    [results.loanAmount, inputs.rate, inputs.years, inputs.closingCosts]
   );
 
   const extraPaymentConfig: ExtraPaymentConfig = useMemo(
@@ -691,6 +705,14 @@ export function MortgageCalculator() {
               max={30}
             />
           </div>
+          <InputField
+            label="Closing Costs"
+            value={inputs.closingCosts}
+            onChange={(closingCosts) =>
+              setInputs((prev) => ({ ...prev, closingCosts }))
+            }
+            prefix="$"
+          />
         </div>
 
         <div className="pt-4">
@@ -904,6 +926,14 @@ export function MortgageCalculator() {
                 )}
               </span>
             </div>
+            {inputs.closingCosts > 0 && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">APR</span>
+                <span className="text-foreground font-medium">
+                  {aprResult.apr.toFixed(3)}%
+                </span>
+              </div>
+            )}
             <div className="border-border flex justify-between border-t pt-2">
               <span className="text-foreground font-semibold">Total Cost</span>
               <span className="text-foreground font-semibold">
