@@ -39,28 +39,28 @@ export function EarlyPayoffSavings({
 
   return (
     <div className="bg-sage/20 border-sage/30 mb-4 rounded-xl border p-4">
-      <h3 className="text-charcoal mb-2 text-sm font-semibold">
+      <h3 className="text-foreground mb-2 text-sm font-semibold">
         Early Payoff Savings
       </h3>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <p className="text-slate text-xs tracking-wide uppercase">
+          <p className="text-muted-foreground text-xs tracking-wide uppercase">
             Time Saved
           </p>
-          <p className="text-charcoal font-serif text-base">
+          <p className="text-foreground font-serif text-base">
             {formatTimeSaved()}
           </p>
         </div>
         <div>
-          <p className="text-slate text-xs tracking-wide uppercase">
+          <p className="text-muted-foreground text-xs tracking-wide uppercase">
             Interest Saved
           </p>
-          <p className="text-charcoal font-serif text-base">
+          <p className="text-foreground font-serif text-base">
             {formatCurrency(interestSaved)}
           </p>
         </div>
       </div>
-      <p className="text-slate mt-2 text-xs">
+      <p className="text-muted-foreground mt-2 text-xs">
         Payoff: {formatActualTerm()} (vs {originalYears} yr)
       </p>
     </div>

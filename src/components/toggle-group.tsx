@@ -32,9 +32,9 @@ export function ToggleGroup<T extends string>({
   };
 
   return (
-    <div className={cn("border-sand border-t pt-3", className)}>
+    <div className={cn("border-border border-t pt-3", className)}>
       {label && (
-        <label className="text-slate mb-2 block text-xs font-medium tracking-wide uppercase">
+        <label className="text-muted-foreground mb-2 block text-xs font-medium tracking-wide uppercase">
           {label}
         </label>
       )}
@@ -46,10 +46,10 @@ export function ToggleGroup<T extends string>({
             onClick={() => onChange(option.id)}
             className={cn(
               "rounded-lg px-1.5 py-2 text-xs font-medium transition-all duration-200",
-              "focus-visible:ring-terracotta focus:outline-none focus-visible:ring-2",
+              "focus-visible:ring-destructive focus:outline-none focus-visible:ring-2",
               selected === option.id
-                ? "bg-charcoal text-ivory"
-                : "bg-cream text-slate hover:text-charcoal border-sand border"
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary text-muted-foreground hover:text-foreground border-border border"
             )}
           >
             {option.label}
@@ -57,7 +57,9 @@ export function ToggleGroup<T extends string>({
         ))}
       </div>
       {descriptions && descriptions[selected] && (
-        <p className="text-slate mt-2 text-xs">{descriptions[selected]}</p>
+        <p className="text-muted-foreground mt-2 text-xs">
+          {descriptions[selected]}
+        </p>
       )}
     </div>
   );

@@ -87,7 +87,7 @@ export function ExtraPaymentSection({
           <div>
             <label
               htmlFor={selectId}
-              className="text-slate mb-1.5 block text-xs font-medium tracking-wide uppercase"
+              className="text-muted-foreground mb-1.5 block text-xs font-medium tracking-wide uppercase"
             >
               Apply in Month
             </label>
@@ -97,7 +97,7 @@ export function ExtraPaymentSection({
               onChange={(e) =>
                 onExtraYearlyMonthChange(parseInt(e.target.value, 10) || 1)
               }
-              className="bg-cream border-sand text-charcoal focus:border-terracotta focus:bg-ivory w-full rounded-xl border-2 px-3 py-3 text-base font-medium transition-all duration-200"
+              className="bg-secondary border-border text-foreground focus:border-ring focus:bg-card w-full rounded-xl border-2 px-3 py-3 text-base font-medium transition-all duration-200"
             >
               {MONTHS.map((month, idx) => (
                 <option key={month} value={idx + 1}>

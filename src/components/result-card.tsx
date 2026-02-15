@@ -13,21 +13,21 @@ export function ResultCard({
 }: ResultCardProps) {
   return (
     <div
-      className={`rounded-xl p-4 transition-all duration-300 ${highlight ? "bg-terracotta text-ivory" : "bg-cream text-charcoal"} `}
+      className={`rounded-xl p-4 transition-all duration-300 ${highlight ? "bg-destructive text-primary-foreground" : "bg-secondary text-foreground"} `}
     >
       <p
-        className={`mb-0.5 text-xs font-medium tracking-wide uppercase ${highlight ? "text-ivory/70" : "text-slate"}`}
+        className={`mb-0.5 text-xs font-medium tracking-wide uppercase ${highlight ? "text-primary-foreground/70" : "text-muted-foreground"}`}
       >
         {label}
       </p>
       <p
-        className={`font-serif text-2xl ${highlight ? "text-ivory" : "text-charcoal"}`}
+        className={`font-serif text-2xl ${highlight ? "text-primary-foreground" : "text-foreground"}`}
       >
         {value}
       </p>
       {subtext && (
         <p
-          className={`mt-1 text-xs ${highlight ? "text-ivory/60" : "text-slate"}`}
+          className={`mt-1 text-xs ${highlight ? "text-primary-foreground/60" : "text-muted-foreground"}`}
         >
           {subtext}
         </p>

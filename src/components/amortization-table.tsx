@@ -19,39 +19,39 @@ export function AmortizationTable({
   if (schedule.length === 0) return null;
 
   return (
-    <div className="bg-cream overflow-hidden rounded-2xl p-4">
-      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+    <div className="bg-secondary overflow-hidden rounded-2xl p-4">
+      <h3 className="text-foreground mb-3 text-sm font-semibold">
         Amortization Schedule
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-sand border-b-2">
-              <th className="text-slate px-2 py-2 text-left font-medium">
+            <tr className="border-border border-b-2">
+              <th className="text-muted-foreground px-2 py-2 text-left font-medium">
                 {periodLabel}
               </th>
-              <th className="text-slate px-2 py-2 text-right font-medium">
+              <th className="text-muted-foreground px-2 py-2 text-right font-medium">
                 Principal
               </th>
-              <th className="text-slate px-2 py-2 text-right font-medium">
+              <th className="text-muted-foreground px-2 py-2 text-right font-medium">
                 Interest
               </th>
-              <th className="text-slate px-2 py-2 text-right font-medium">
+              <th className="text-muted-foreground px-2 py-2 text-right font-medium">
                 Balance
               </th>
             </tr>
           </thead>
           <tbody>
             {displayRows.map((row) => (
-              <tr key={row.period} className="border-sand/50 border-b">
-                <td className="text-charcoal px-2 py-2">{row.period}</td>
-                <td className="text-charcoal px-2 py-2 text-right">
+              <tr key={row.period} className="border-border/50 border-b">
+                <td className="text-foreground px-2 py-2">{row.period}</td>
+                <td className="text-foreground px-2 py-2 text-right">
                   {formatCurrency(row.principal)}
                 </td>
-                <td className="text-slate px-2 py-2 text-right">
+                <td className="text-muted-foreground px-2 py-2 text-right">
                   {formatCurrency(row.interest)}
                 </td>
-                <td className="text-charcoal px-2 py-2 text-right font-medium">
+                <td className="text-foreground px-2 py-2 text-right font-medium">
                   {formatCurrency(row.balance)}
                 </td>
               </tr>
@@ -62,7 +62,7 @@ export function AmortizationTable({
       {hasMore && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="text-terracotta hover:text-terracotta-dark mt-3 text-sm font-medium transition-colors"
+          className="text-destructive hover:destructive/80 mt-3 text-sm font-medium transition-colors"
         >
           {expanded
             ? "Show less"

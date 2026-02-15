@@ -39,20 +39,20 @@ function useChartColors() {
 
   return useMemo(
     () => ({
-      principal: isDark ? "#a8a29e" : "#2d2a26",
-      interest: "#c45d3e",
+      principal: isDark ? "#f5f2ed" : "#2d2a26",
+      interest: isDark ? "#e07a5f" : "#c45d3e",
       balance: "#7a9a7a",
-      contributions: isDark ? "#a8a29e" : "#2d2a26",
-      growth: "#c45d3e",
+      contributions: isDark ? "#f5f2ed" : "#2d2a26",
+      growth: isDark ? "#e07a5f" : "#c45d3e",
       tax: "#6b8e6b",
       insurance: "#8b7355",
       hoa: "#d97b5d",
       other: "#9cb89c",
-      text: isDark ? "#a8a29e" : "#6b6560",
-      axis: isDark ? "#44403c" : "#e8e4dc",
+      text: isDark ? "#7a756e" : "#a09a90",
+      axis: isDark ? "#444040" : "#e0dbd3",
       tooltip: {
-        bg: isDark ? "#292524" : "#faf8f5",
-        border: isDark ? "#44403c" : "#e8e4dc"
+        bg: isDark ? "#1a1917" : "#faf8f5",
+        border: isDark ? "#444040" : "#e0dbd3"
       }
     }),
     [isDark]
@@ -151,15 +151,15 @@ export function BalanceChart({
   }
 
   return (
-    <div className="bg-cream rounded-2xl p-4">
+    <div className="bg-secondary rounded-2xl p-4">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-charcoal text-sm font-semibold">
+        <h3 className="text-foreground text-sm font-semibold">
           {view === "balance" ? "Principal & Interest" : "All Payments"}
         </h3>
         <div
           role="group"
           aria-label="Chart view"
-          className="bg-sand flex rounded-lg p-0.5"
+          className="bg-accent flex rounded-lg p-0.5"
         >
           <button
             type="button"
@@ -167,8 +167,8 @@ export function BalanceChart({
             aria-pressed={view === "balance"}
             className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
               view === "balance"
-                ? "bg-charcoal text-ivory"
-                : "text-slate hover:text-charcoal"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Balance
@@ -179,8 +179,8 @@ export function BalanceChart({
             aria-pressed={view === "payments"}
             className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
               view === "payments"
-                ? "bg-charcoal text-ivory"
-                : "text-slate hover:text-charcoal"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Payments
@@ -320,7 +320,6 @@ export function BalanceChart({
         </ResponsiveContainer>
       </div>
 
-      {/* Legend */}
       <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1">
         {view === "balance" ? (
           <>
@@ -329,14 +328,14 @@ export function BalanceChart({
                 className="h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: COLORS.principal }}
               />
-              <span className="text-slate text-xs">Principal</span>
+              <span className="text-muted-foreground text-xs">Principal</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div
                 className="h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: COLORS.interest }}
               />
-              <span className="text-slate text-xs">Interest</span>
+              <span className="text-muted-foreground text-xs">Interest</span>
             </div>
           </>
         ) : (
@@ -346,7 +345,7 @@ export function BalanceChart({
                 className="h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: line.color }}
               />
-              <span className="text-slate text-xs">{line.name}</span>
+              <span className="text-muted-foreground text-xs">{line.name}</span>
             </div>
           ))
         )}
@@ -378,8 +377,8 @@ export function PaymentBreakdownChart({
   const interestPercent = ((interest / total) * 100).toFixed(0);
 
   return (
-    <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+    <div className="bg-secondary rounded-2xl p-4">
+      <h3 className="text-foreground mb-3 text-sm font-semibold">
         Total Payment Breakdown
       </h3>
       <div className="h-48">
@@ -417,7 +416,7 @@ export function PaymentBreakdownChart({
             className="h-3 w-3 rounded-full"
             style={{ backgroundColor: COLORS.principal }}
           />
-          <span className="text-slate text-xs">
+          <span className="text-muted-foreground text-xs">
             Principal ({principalPercent}%)
           </span>
         </div>
@@ -426,7 +425,7 @@ export function PaymentBreakdownChart({
             className="h-3 w-3 rounded-full"
             style={{ backgroundColor: COLORS.interest }}
           />
-          <span className="text-slate text-xs">
+          <span className="text-muted-foreground text-xs">
             Interest ({interestPercent}%)
           </span>
         </div>
@@ -456,8 +455,8 @@ export function InvestmentGrowthChart({
   }));
 
   return (
-    <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+    <div className="bg-secondary rounded-2xl p-4">
+      <h3 className="text-foreground mb-3 text-sm font-semibold">
         Growth Over Time
       </h3>
       <div className="h-64">
@@ -540,14 +539,14 @@ export function InvestmentGrowthChart({
             className="h-3 w-3 rounded-full"
             style={{ backgroundColor: COLORS.growth }}
           />
-          <span className="text-slate text-xs">Total Value</span>
+          <span className="text-muted-foreground text-xs">Total Value</span>
         </div>
         <div className="flex items-center gap-2">
           <div
             className="h-3 w-3 rounded-full"
             style={{ backgroundColor: COLORS.contributions }}
           />
-          <span className="text-slate text-xs">Contributions</span>
+          <span className="text-muted-foreground text-xs">Contributions</span>
         </div>
       </div>
     </div>
@@ -581,8 +580,8 @@ export function InvestmentBreakdownChart({
   const interestPercent = ((interest / total) * 100).toFixed(0);
 
   return (
-    <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+    <div className="bg-secondary rounded-2xl p-4">
+      <h3 className="text-foreground mb-3 text-sm font-semibold">
         Final Value Breakdown
       </h3>
       <div className="h-48">
@@ -620,7 +619,7 @@ export function InvestmentBreakdownChart({
             className="h-3 w-3 rounded-full"
             style={{ backgroundColor: COLORS.contributions }}
           />
-          <span className="text-slate text-xs">
+          <span className="text-muted-foreground text-xs">
             Contributions ({contribPercent}%)
           </span>
         </div>
@@ -629,7 +628,7 @@ export function InvestmentBreakdownChart({
             className="h-3 w-3 rounded-full"
             style={{ backgroundColor: COLORS.growth }}
           />
-          <span className="text-slate text-xs">
+          <span className="text-muted-foreground text-xs">
             Interest ({interestPercent}%)
           </span>
         </div>
@@ -659,8 +658,8 @@ export function InvestmentStackedChart({
   }));
 
   return (
-    <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+    <div className="bg-secondary rounded-2xl p-4">
+      <h3 className="text-foreground mb-3 text-sm font-semibold">
         Contributions vs Interest
       </h3>
       <div className="h-56">
@@ -751,14 +750,14 @@ export function InvestmentStackedChart({
             className="h-3 w-3 rounded-full"
             style={{ backgroundColor: COLORS.contributions }}
           />
-          <span className="text-slate text-xs">Contributions</span>
+          <span className="text-muted-foreground text-xs">Contributions</span>
         </div>
         <div className="flex items-center gap-2">
           <div
             className="h-3 w-3 rounded-full"
             style={{ backgroundColor: COLORS.growth }}
           />
-          <span className="text-slate text-xs">Interest</span>
+          <span className="text-muted-foreground text-xs">Interest</span>
         </div>
       </div>
     </div>
@@ -779,14 +778,13 @@ interface MortgageCostChartProps {
   customCosts?: CustomCostItem[];
 }
 
-// Extended color palette for custom costs
 const CUSTOM_COST_COLORS = [
-  "#9cb89c", // light sage
-  "#b8a88a", // tan
-  "#a89090", // dusty rose
-  "#8aa8b8", // steel blue
-  "#b8a0c0", // lavender
-  "#c0b890" // olive
+  "#9cb89c",
+  "#b8a88a",
+  "#a89090",
+  "#8aa8b8",
+  "#b8a0c0",
+  "#c0b890"
 ];
 
 export function MortgageCostChart({
@@ -819,8 +817,8 @@ export function MortgageCostChart({
   ];
 
   return (
-    <div className="bg-cream rounded-2xl p-4">
-      <h3 className="text-charcoal mb-3 text-sm font-semibold">
+    <div className="bg-secondary rounded-2xl p-4">
+      <h3 className="text-foreground mb-3 text-sm font-semibold">
         Total Cost Breakdown
       </h3>
       <div className="h-48">
@@ -862,7 +860,7 @@ export function MortgageCostChart({
               className="h-2.5 w-2.5 rounded-full"
               style={{ backgroundColor: item.color }}
             />
-            <span className="text-slate text-xs">
+            <span className="text-muted-foreground text-xs">
               {item.name} ({((item.value / total) * 100).toFixed(0)}%)
             </span>
           </div>

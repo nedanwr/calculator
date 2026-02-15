@@ -45,9 +45,6 @@ export function InputField({
   const [displayValue, setDisplayValue] = useState(() => formatValue(value));
   const [isFocused, setIsFocused] = useState(false);
 
-  // Sync display value when external value changes and input is not focused
-  // Using useLayoutEffect for controlled input sync - this is a valid pattern
-  // for derived state synchronization with external controlled input
   useLayoutEffect(() => {
     if (!isFocused) {
       const absValue = Math.abs(value);
@@ -62,7 +59,6 @@ export function InputField({
     }
   }, [value, isFocused, displayValue, decimals]);
 
-  // Restore cursor position after display value changes
   useLayoutEffect(() => {
     const input = inputRef.current;
     if (input && document.activeElement === input) {
@@ -75,10 +71,8 @@ export function InputField({
     const rawValue = input.value;
     const cursorPos = input.selectionStart || 0;
 
-    // Check for leading negative sign
     const isNegative = allowNegative && rawValue.startsWith("-");
 
-    // Strip everything except digits and decimal
     let cleaned = rawValue.replace(/[^\d.]/g, "");
 
     const decimalIndex = cleaned.indexOf(".");
@@ -96,10 +90,8 @@ export function InputField({
     }
 
     const formatted = formatWithCommas(cleaned);
-    // Preserve the minus sign even when no digits entered yet
     const displayFormatted = isNegative ? `-${formatted}` : formatted;
 
-    // Count significant chars (digits and decimal) before cursor for positioning
     const charsToCount = allowNegative ? /[^\d.-]/g : /[^\d.]/g;
     const digitsBeforeCursor = rawValue
       .slice(0, cursorPos)
@@ -136,8 +128,6 @@ export function InputField({
   const handleBlur = () => {
     setIsFocused(false);
     let finalValue = value;
-    // Only apply min constraint on blur if not allowing negative (default behavior)
-    // or if allowNegative is true and a min is explicitly set
     if (min !== undefined && value < min && (!allowNegative || min !== 0)) {
       finalValue = min;
     }
@@ -154,14 +144,14 @@ export function InputField({
       {label && (
         <label
           htmlFor={inputId}
-          className="text-slate mb-1.5 block text-xs font-medium tracking-wide uppercase"
+          className="text-muted-foreground mb-1.5 block text-xs font-medium tracking-wide uppercase"
         >
           {label}
         </label>
       )}
       <div className="relative">
         {prefix && (
-          <span className="text-slate absolute top-1/2 left-3 -translate-y-1/2">
+          <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
             {prefix}
           </span>
         )}
@@ -175,10 +165,10 @@ export function InputField({
           onFocus={handleFocus}
           id={inputId}
           aria-labelledby={ariaLabelledBy}
-          className={`bg-cream border-sand text-charcoal placeholder:text-stone focus:border-terracotta focus:bg-ivory w-full rounded-xl border-2 py-3 text-base font-medium transition-all duration-200 ${prefix ? "pl-8" : "pl-3"} ${suffix ? "pr-12" : "pr-3"} `}
+          className={`bg-secondary border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:bg-card w-full rounded-xl border-2 py-3 text-base font-medium transition-all duration-200 ${prefix ? "pl-8" : "pl-3"} ${suffix ? "pr-12" : "pr-3"} `}
         />
         {suffix && (
-          <span className="text-slate absolute top-1/2 right-3 -translate-y-1/2 text-sm">
+          <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
             {suffix}
           </span>
         )}

@@ -63,7 +63,7 @@ export function ExportControls({
           }
         }}
         aria-label="Print or save as PDF"
-        className="text-slate hover:text-charcoal rounded-lg p-1.5 transition-colors"
+        className="text-muted-foreground hover:text-foreground rounded-lg p-1.5 transition-colors"
       >
         <Printer size={16} aria-hidden="true" />
       </button>
