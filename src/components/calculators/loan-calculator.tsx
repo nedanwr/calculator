@@ -327,19 +327,20 @@ export function LoanCalculator() {
       interest_only: "Interest Only",
       no_payment: "Full Deferral"
     };
+    const gracePeriod =
+      inputs.gracePeriodType !== "none"
+        ? {
+            type: graceLabels[inputs.gracePeriodType],
+            months: inputs.gracePeriodMonths
+          }
+        : undefined;
     printLoan(
       {
         principal: inputs.principal,
         rate: inputs.rate,
         years: inputs.years,
         repaymentType: repaymentLabels[inputs.repaymentType],
-        gracePeriod:
-          inputs.gracePeriodType !== "none"
-            ? {
-                type: graceLabels[inputs.gracePeriodType],
-                months: inputs.gracePeriodMonths
-              }
-            : undefined,
+        ...(gracePeriod ? { gracePeriod } : {}),
         monthlyPayment:
           hasExtraPayments && extraPaymentResults
             ? extraPaymentResults.effectiveMonthlyPayment
