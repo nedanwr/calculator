@@ -5,17 +5,19 @@ import * as React from "react";
 import { cn } from "~/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terracotta",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-destructive",
   {
     variants: {
       variant: {
-        default: "bg-charcoal text-ivory hover:bg-charcoal/90",
-        secondary: "bg-cream text-charcoal border-2 border-sand hover:bg-sand",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        secondary:
+          "bg-secondary text-secondary-foreground border-2 border-border hover:bg-secondary/80",
         outline:
-          "bg-transparent text-charcoal border-2 border-sand hover:bg-cream",
-        ghost: "text-slate hover:text-charcoal hover:bg-cream",
-        destructive: "bg-terracotta text-ivory hover:bg-terracotta/90",
-        link: "text-charcoal underline-offset-4 hover:underline"
+          "bg-transparent text-foreground border-2 border-border hover:bg-secondary",
+        ghost: "text-muted-foreground hover:text-foreground hover:bg-secondary",
+        destructive:
+          "bg-destructive text-primary-foreground hover:bg-destructive/90",
+        link: "text-foreground underline-offset-4 hover:underline"
       },
       size: {
         default: "h-9 px-4 py-2 rounded-xl",

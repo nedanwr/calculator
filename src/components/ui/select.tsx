@@ -31,9 +31,9 @@ function SelectTrigger({
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
       className={cn(
-        "bg-cream border-sand w-full rounded-xl border-2 px-4 py-3",
-        "text-charcoal flex items-center justify-between text-left text-base font-medium",
-        "focus:border-terracotta focus:bg-ivory transition-all duration-200",
+        "bg-secondary border-border w-full rounded-xl border-2 px-4 py-3",
+        "text-foreground flex items-center justify-between text-left text-base font-medium",
+        "focus:border-ring focus:bg-card transition-all duration-200",
         "disabled:cursor-not-allowed disabled:opacity-60",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0",
         className
@@ -61,7 +61,7 @@ function SelectContent({
         data-slot="select-content"
         className={cn(
           "relative z-50 max-h-60 overflow-y-auto",
-          "bg-cream border-sand rounded-xl border-2 shadow-lg",
+          "bg-secondary border-border rounded-xl border-2 shadow-lg",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -96,7 +96,7 @@ function SelectLabel({
     <SelectPrimitive.Label
       data-slot="select-label"
       className={cn(
-        "text-slate px-4 py-2 text-xs font-medium tracking-wide uppercase",
+        "text-muted-foreground px-4 py-2 text-xs font-medium tracking-wide uppercase",
         className
       )}
       {...props}
@@ -113,10 +113,10 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "text-charcoal relative flex w-full cursor-pointer items-center px-4 py-3 text-sm",
+        "text-foreground relative flex w-full cursor-pointer items-center px-4 py-3 text-sm",
         "rounded-lg outline-none select-none",
-        "data-highlighted:bg-sand data-highlighted:rounded-lg",
-        "data-[state=checked]:bg-charcoal data-[state=checked]:text-ivory",
+        "data-highlighted:bg-accent data-highlighted:rounded-lg",
+        "data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
         "transition-colors duration-150",
         className
       )}
@@ -137,7 +137,7 @@ function SelectSeparator({
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"
-      className={cn("bg-sand mx-2 my-1 h-px", className)}
+      className={cn("bg-border mx-2 my-1 h-px", className)}
       {...props}
     />
   );
@@ -156,7 +156,7 @@ function SelectScrollUpButton({
       )}
       {...props}
     >
-      <ChevronUpIcon className="text-slate size-4" />
+      <ChevronUpIcon className="text-muted-foreground size-4" />
     </SelectPrimitive.ScrollUpButton>
   );
 }
@@ -174,7 +174,7 @@ function SelectScrollDownButton({
       )}
       {...props}
     >
-      <ChevronDownIcon className="text-slate size-4" />
+      <ChevronDownIcon className="text-muted-foreground size-4" />
     </SelectPrimitive.ScrollDownButton>
   );
 }
