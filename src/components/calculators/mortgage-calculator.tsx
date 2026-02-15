@@ -1,3 +1,4 @@
+import { Plus, X } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -6,8 +7,15 @@ import {
   useRef,
   useState
 } from "react";
-import { Plus, X } from "lucide-react";
 
+import { AmortizationTable } from "~/components/amortization-table";
+import { BalanceChart, MortgageCostChart } from "~/components/charts";
+import { EarlyPayoffSavings } from "~/components/early-payoff-savings";
+import { ExportControls } from "~/components/export-controls";
+import { ExtraPaymentSection } from "~/components/extra-payment-section";
+import { InputField } from "~/components/input-field";
+import { PIBreakdown } from "~/components/pi-breakdown";
+import { useTheme } from "~/components/theme-provider";
 import { useFormattedInput } from "~/hooks/use-formatted-input";
 import {
   calculateLoanPayment,
@@ -21,14 +29,6 @@ import {
 import { exportMortgageCSV, exportMortgageExcel } from "~/lib/export";
 import { formatCurrency, formatCurrencyPrecise } from "~/lib/format";
 import { printMortgage } from "~/lib/print";
-import { AmortizationTable } from "~/components/amortization-table";
-import { BalanceChart, MortgageCostChart } from "~/components/charts";
-import { EarlyPayoffSavings } from "~/components/early-payoff-savings";
-import { ExportControls } from "~/components/export-controls";
-import { ExtraPaymentSection } from "~/components/extra-payment-section";
-import { InputField } from "~/components/input-field";
-import { PIBreakdown } from "~/components/pi-breakdown";
-import { useTheme } from "~/components/theme-provider";
 
 type InputMode = "dollar" | "percent";
 type Frequency = "monthly" | "yearly";
