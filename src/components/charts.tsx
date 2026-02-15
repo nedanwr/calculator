@@ -113,14 +113,14 @@ export function BalanceChart({
 
     if (hasMonthlyCosts) {
       if (monthlyCosts.tax)
-        result.tax = monthlyCosts.tax * monthsPerPeriod * periodsElapsed;
+        result["tax"] = monthlyCosts.tax * monthsPerPeriod * periodsElapsed;
       if (monthlyCosts.insurance)
-        result.insurance =
+        result["insurance"] =
           monthlyCosts.insurance * monthsPerPeriod * periodsElapsed;
       if (monthlyCosts.hoa)
-        result.hoa = monthlyCosts.hoa * monthsPerPeriod * periodsElapsed;
+        result["hoa"] = monthlyCosts.hoa * monthsPerPeriod * periodsElapsed;
       if (monthlyCosts.other)
-        result.other = monthlyCosts.other * monthsPerPeriod * periodsElapsed;
+        result["other"] = monthlyCosts.other * monthsPerPeriod * periodsElapsed;
     }
 
     return result;
