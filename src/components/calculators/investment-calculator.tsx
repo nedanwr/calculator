@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { InputField } from "../input-field";
 import { formatCurrency } from "../../lib/format";
 import { calculateInvestment, generateInvestmentSchedule } from "../../lib/calculations";
@@ -92,6 +92,20 @@ export function InvestmentCalculator() {
     return generateInvestmentSchedule(inputs.initial, monthlyContribution, effectiveRate, inputs.years);
   }, [inputs.initial, monthlyContribution, effectiveRate, inputs.years]);
 
+  const liveRegionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (liveRegionRef.current) {
+      liveRegionRef.current.textContent = "";
+      setTimeout(() => {
+        if (liveRegionRef.current) {
+          const message = `Future value ${formatCurrency(results.futureValue)}, total contributions ${formatCurrency(results.totalContributions)}, interest earned ${formatCurrency(results.totalInterest)}`;
+          liveRegionRef.current.textContent = message;
+        }
+      }, 100);
+    }
+  }, [results.futureValue, results.totalContributions, results.totalInterest]);
+
   const handleExportCSV = useCallback(() => {
     exportInvestmentCSV({
       initial: inputs.initial,
@@ -133,6 +147,13 @@ export function InvestmentCalculator() {
 
   return (
     <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-8 h-full">
+      <div
+        ref={liveRegionRef}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      />
       {/* Column 1: Inputs */}
       <div className="space-y-4 lg:overflow-y-auto lg:pr-6 lg:pb-4">
         <h2 className="text-base font-semibold text-charcoal">Investment Details</h2>
