@@ -1,28 +1,28 @@
-import { defineConfig } from "vitest/config";
-import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import path from "path";
+import { defineConfig } from "vitest/config";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react({
       babel: {
-        plugins: [["babel-plugin-react-compiler"]],
-      },
+        plugins: [["babel-plugin-react-compiler"]]
+      }
     }),
-    tailwindcss(),
+    tailwindcss()
   ],
   resolve: {
     alias: {
-      "~": path.resolve(__dirname, "./src"),
-    },
+      "~": path.resolve(__dirname, "./src")
+    }
   },
   test: {
     globals: true,
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"]
   },
   build: {
     chunkSizeWarningLimit: 1000,
@@ -38,12 +38,12 @@ export default defineConfig({
           if (id.includes("node_modules/lucide-react")) {
             return "lucide-react";
           }
-        },
-      },
+        }
+      }
     },
-    target: "esnext",
+    target: "esnext"
   },
   optimizeDeps: {
-    include: ["lucide-react"],
-  },
+    include: ["lucide-react"]
+  }
 });
