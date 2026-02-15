@@ -54,6 +54,7 @@ interface MortgageInputs {
   propertyTaxMode: InputMode;
   insurance: number;
   hoa: number;
+  pmiRate: number;
   customCosts: CustomCost[];
   extraPaymentType: ExtraPaymentType;
   extraMonthly: number;
@@ -299,6 +300,7 @@ export function MortgageCalculator() {
     propertyTaxMode: "percent",
     insurance: 1800,
     hoa: 0,
+    pmiRate: 0.5,
     customCosts: [],
     extraPaymentType: "none",
     extraMonthly: 200,
@@ -338,7 +340,8 @@ export function MortgageCalculator() {
         inputs.years,
         annualPropertyTax,
         inputs.insurance,
-        inputs.hoa
+        inputs.hoa,
+        inputs.pmiRate
       ),
     [
       inputs.homePrice,
@@ -347,7 +350,8 @@ export function MortgageCalculator() {
       inputs.years,
       annualPropertyTax,
       inputs.insurance,
-      inputs.hoa
+      inputs.hoa,
+      inputs.pmiRate
     ]
   );
 
@@ -768,6 +772,17 @@ export function MortgageCalculator() {
                 prefix="$"
               />
             </div>
+            {downPaymentPercent < 20 && (
+              <InputField
+                label="PMI Rate"
+                value={inputs.pmiRate}
+                onChange={(pmiRate) =>
+                  setInputs((prev) => ({ ...prev, pmiRate }))
+                }
+                suffix="%"
+                decimals={2}
+              />
+            )}
 
             {inputs.customCosts.length > 0 && (
               <div className="space-y-2">
@@ -855,6 +870,14 @@ export function MortgageCalculator() {
                 {formatCurrencyPrecise(results.monthlyInsurance)}
               </p>
             </div>
+            {results.pmiRequired && (
+              <div>
+                <p className="text-muted-foreground text-xs">PMI</p>
+                <p className="text-foreground font-serif text-sm">
+                  {formatCurrencyPrecise(results.monthlyPmi)}
+                </p>
+              </div>
+            )}
             {hasHoa && (
               <div>
                 <p className="text-muted-foreground text-xs">HOA</p>
