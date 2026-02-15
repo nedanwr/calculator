@@ -1,14 +1,30 @@
-import { useState, lazy, Suspense, useRef, useCallback } from "react";
-import { Percent, Home, TrendingUp, DollarSign } from "lucide-react";
+import { DollarSign, Home, Percent, TrendingUp } from "lucide-react";
+import { lazy, Suspense, useCallback, useRef, useState } from "react";
 
-import { ThemeSwitcher } from "./components/theme-switcher";
-import { ErrorBoundary } from "./components/error-boundary";
-import { Toaster } from "./components/ui/sonner";
+import { ErrorBoundary } from "~/components/error-boundary";
+import { ThemeSwitcher } from "~/components/theme-switcher";
+import { Toaster } from "~/components/ui/sonner";
 
-const LoanCalculator = lazy(() => import("./components/calculators/loan-calculator").then(m => ({ default: m.LoanCalculator })));
-const MortgageCalculator = lazy(() => import("./components/calculators/mortgage-calculator").then(m => ({ default: m.MortgageCalculator })));
-const InvestmentCalculator = lazy(() => import("./components/calculators/investment-calculator").then(m => ({ default: m.InvestmentCalculator })));
-const CurrencyConverter = lazy(() => import("./components/calculators/currency-converter").then(m => ({ default: m.CurrencyConverter })));
+const LoanCalculator = lazy(() =>
+  import("./components/calculators/loan-calculator").then((m) => ({
+    default: m.LoanCalculator
+  }))
+);
+const MortgageCalculator = lazy(() =>
+  import("./components/calculators/mortgage-calculator").then((m) => ({
+    default: m.MortgageCalculator
+  }))
+);
+const InvestmentCalculator = lazy(() =>
+  import("./components/calculators/investment-calculator").then((m) => ({
+    default: m.InvestmentCalculator
+  }))
+);
+const CurrencyConverter = lazy(() =>
+  import("./components/calculators/currency-converter").then((m) => ({
+    default: m.CurrencyConverter
+  }))
+);
 
 type CalculatorMode = "loan" | "mortgage" | "investment" | "currency";
 
@@ -18,7 +34,7 @@ const modes: { id: CalculatorMode; label: string; icon: LucideIcon }[] = [
   { id: "loan", label: "Loan", icon: Percent },
   { id: "mortgage", label: "Mortgage", icon: Home },
   { id: "investment", label: "Invest", icon: TrendingUp },
-  { id: "currency", label: "Currency", icon: DollarSign },
+  { id: "currency", label: "Currency", icon: DollarSign }
 ];
 
 interface ModeButtonProps {
@@ -29,10 +45,12 @@ interface ModeButtonProps {
 }
 
 function ModeButton({ mode: m, isPressed, onClick, variant }: ModeButtonProps) {
-  const baseStyles = "rounded-lg font-medium text-sm tracking-wide transition-all duration-300 ease-out";
-  const variantStyles = variant === "desktop"
-    ? "flex items-center gap-1.5 py-2 px-4"
-    : "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3";
+  const baseStyles =
+    "rounded-lg font-medium text-sm tracking-wide transition-all duration-300 ease-out";
+  const variantStyles =
+    variant === "desktop"
+      ? "flex items-center gap-1.5 py-2 px-4"
+      : "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3";
   const stateStyles = isPressed
     ? "bg-charcoal text-ivory shadow-md"
     : "text-slate hover:text-charcoal";
@@ -57,9 +75,18 @@ interface ModeSwitcherProps {
   className?: string;
 }
 
-function ModeSwitcher({ currentMode, onModeChange, variant, className = "" }: ModeSwitcherProps) {
+function ModeSwitcher({
+  currentMode,
+  onModeChange,
+  variant,
+  className = ""
+}: ModeSwitcherProps) {
   return (
-    <div role="group" aria-label="Calculator type" className={`flex bg-cream rounded-xl p-1 ${className}`}>
+    <div
+      role="group"
+      aria-label="Calculator type"
+      className={`bg-cream flex rounded-xl p-1 ${className}`}
+    >
       {modes.map((m) => (
         <ModeButton
           key={m.id}
@@ -75,7 +102,7 @@ function ModeSwitcher({ currentMode, onModeChange, variant, className = "" }: Mo
 
 function LoadingFallback() {
   return (
-    <div className="flex items-center justify-center h-full min-h-[400px]">
+    <div className="flex h-full min-h-[400px] items-center justify-center">
       <div className="text-slate text-sm">Loading...</div>
     </div>
   );
@@ -91,26 +118,26 @@ function App() {
   }, []);
 
   return (
-    <div className="h-screen bg-ivory flex flex-col overflow-hidden">
+    <div className="bg-ivory flex h-screen flex-col overflow-hidden">
       <Toaster />
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-charcoal focus:text-ivory focus:rounded-lg focus:outline-none"
+        className="focus:bg-charcoal focus:text-ivory sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:px-4 focus:py-2 focus:outline-none"
       >
         Skip to main content
       </a>
       {/* Subtle texture overlay */}
       <div
-        className="fixed inset-0 pointer-events-none opacity-30"
+        className="pointer-events-none fixed inset-0 opacity-30"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
         }}
       />
 
       {/* Header */}
-      <header className="relative shrink-0 flex items-center justify-between px-6 lg:px-10 py-4 border-b border-sand">
+      <header className="border-sand relative flex shrink-0 items-center justify-between border-b px-6 py-4 lg:px-10">
         <div className="flex items-center gap-8">
-          <h1 className="font-serif text-2xl md:text-3xl text-charcoal">
+          <h1 className="text-charcoal font-serif text-2xl md:text-3xl">
             Finesse
           </h1>
           <ModeSwitcher
@@ -124,8 +151,12 @@ function App() {
       </header>
 
       {/* Mobile Mode Switcher */}
-      <div className="sm:hidden relative shrink-0 px-4 py-3 border-b border-sand">
-        <ModeSwitcher currentMode={mode} onModeChange={handleModeChange} variant="mobile" />
+      <div className="border-sand relative shrink-0 border-b px-4 py-3 sm:hidden">
+        <ModeSwitcher
+          currentMode={mode}
+          onModeChange={handleModeChange}
+          variant="mobile"
+        />
       </div>
 
       {/* Main Content - Lazy loaded calculators */}
@@ -133,16 +164,16 @@ function App() {
         ref={mainRef}
         id="main-content"
         tabIndex={-1}
-        className="relative flex-1 min-h-0 overflow-y-auto focus:outline-none"
+        className="relative min-h-0 flex-1 overflow-y-auto focus:outline-none"
       >
-        <div className="max-w-[1600px] mx-auto px-4 xl:px-8 py-4 lg:h-full">
+        <div className="mx-auto max-w-[1600px] px-4 py-4 lg:h-full xl:px-8">
           <ErrorBoundary>
             <Suspense fallback={<LoadingFallback />}>
               {mode === "loan" && <LoanCalculator />}
               {mode === "mortgage" && <MortgageCalculator />}
               {mode === "investment" && <InvestmentCalculator />}
               {mode === "currency" && (
-                <div className="flex items-center justify-center h-full py-8">
+                <div className="flex h-full items-center justify-center py-8">
                   <CurrencyConverter />
                 </div>
               )}
