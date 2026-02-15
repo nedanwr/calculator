@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  calculateInvestment,
-  generateInvestmentSchedule
-} from "~/lib/calculations";
-import { exportInvestmentCSV, exportInvestmentExcel } from "~/lib/export";
-import { formatCurrency } from "~/lib/format";
-import { printInvestment } from "~/lib/print";
-import {
   InvestmentBreakdownChart,
   InvestmentGrowthChart,
   InvestmentStackedChart
@@ -15,6 +8,13 @@ import {
 import { ExportControls } from "~/components/export-controls";
 import { InputField } from "~/components/input-field";
 import { useTheme } from "~/components/theme-provider";
+import {
+  calculateInvestment,
+  generateInvestmentSchedule
+} from "~/lib/calculations";
+import { exportInvestmentCSV, exportInvestmentExcel } from "~/lib/export";
+import { formatCurrency } from "~/lib/format";
+import { printInvestment } from "~/lib/print";
 
 type ContributionFrequency = "monthly" | "yearly";
 
