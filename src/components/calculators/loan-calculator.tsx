@@ -1,5 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { AmortizationTable } from "~/components/amortization-table";
+import { BalanceChart, PaymentBreakdownChart } from "~/components/charts";
+import { EarlyPayoffSavings } from "~/components/early-payoff-savings";
+import { ExportControls } from "~/components/export-controls";
+import { ExtraPaymentSection } from "~/components/extra-payment-section";
+import { InputField } from "~/components/input-field";
+import { PIBreakdown } from "~/components/pi-breakdown";
+import { useTheme } from "~/components/theme-provider";
+import { ToggleGroup } from "~/components/toggle-group";
 import {
   calculateBalloonLoan,
   calculateBulletLoan,
@@ -14,15 +23,6 @@ import {
 import { exportLoanCSV, exportLoanExcel } from "~/lib/export";
 import { formatCurrency, formatCurrencyPrecise } from "~/lib/format";
 import { printLoan } from "~/lib/print";
-import { AmortizationTable } from "~/components/amortization-table";
-import { ButtonGroup } from "~/components/button-group";
-import { BalanceChart, PaymentBreakdownChart } from "~/components/charts";
-import { EarlyPayoffSavings } from "~/components/early-payoff-savings";
-import { ExportControls } from "~/components/export-controls";
-import { ExtraPaymentSection } from "~/components/extra-payment-section";
-import { InputField } from "~/components/input-field";
-import { PIBreakdown } from "~/components/pi-breakdown";
-import { useTheme } from "~/components/theme-provider";
 
 type RepaymentType = "standard" | "balloon" | "bullet";
 
@@ -414,7 +414,7 @@ export function LoanCalculator() {
         </div>
 
         {/* Repayment Type */}
-        <ButtonGroup
+        <ToggleGroup
           label="Repayment Type"
           options={repaymentOptions}
           selected={inputs.repaymentType}
@@ -435,7 +435,7 @@ export function LoanCalculator() {
         {/* Grace Period - only for standard loans */}
         {inputs.repaymentType === "standard" && (
           <>
-            <ButtonGroup
+            <ToggleGroup
               label="Grace Period"
               options={graceOptions}
               selected={inputs.gracePeriodType}
