@@ -73,19 +73,19 @@ function validateExchangeRateResponse(
 
   const response = data as Record<string, unknown>;
 
-  if (typeof response.amount !== "number" || response.amount !== 1) {
+  if (typeof response["amount"] !== "number" || response["amount"] !== 1) {
     throw new Error("Invalid amount in response");
   }
 
-  if (!isValidCurrencyCode(response.base)) {
+  if (!isValidCurrencyCode(response["base"])) {
     throw new Error("Invalid base currency in response");
   }
 
-  if (typeof response.date !== "string") {
+  if (typeof response["date"] !== "string") {
     throw new Error("Invalid date in response");
   }
 
-  const rates = response.rates;
+  const rates = response["rates"];
   if (!rates || typeof rates !== "object") {
     throw new Error("Missing rates in response");
   }
