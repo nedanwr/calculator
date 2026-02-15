@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useRef, useCallback } from "react";
 import { Percent, Home, TrendingUp, DollarSign } from "lucide-react";
 
 import { ThemeSwitcher } from "./components/theme-switcher";
@@ -83,10 +83,22 @@ function LoadingFallback() {
 
 function App() {
   const [mode, setMode] = useState<CalculatorMode>("loan");
+  const mainRef = useRef<HTMLElement>(null);
+
+  const handleModeChange = useCallback((newMode: CalculatorMode) => {
+    setMode(newMode);
+    mainRef.current?.focus();
+  }, []);
 
   return (
     <div className="h-screen bg-ivory flex flex-col overflow-hidden">
       <Toaster />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-charcoal focus:text-ivory focus:rounded-lg focus:outline-none"
+      >
+        Skip to main content
+      </a>
       {/* Subtle texture overlay */}
       <div
         className="fixed inset-0 pointer-events-none opacity-30"
@@ -103,7 +115,7 @@ function App() {
           </h1>
           <ModeSwitcher
             currentMode={mode}
-            onModeChange={setMode}
+            onModeChange={handleModeChange}
             variant="desktop"
             className="hidden sm:flex"
           />
@@ -113,11 +125,16 @@ function App() {
 
       {/* Mobile Mode Switcher */}
       <div className="sm:hidden relative shrink-0 px-4 py-3 border-b border-sand">
-        <ModeSwitcher currentMode={mode} onModeChange={setMode} variant="mobile" />
+        <ModeSwitcher currentMode={mode} onModeChange={handleModeChange} variant="mobile" />
       </div>
 
       {/* Main Content - Lazy loaded calculators */}
-      <main className="relative flex-1 min-h-0 overflow-y-auto">
+      <main
+        ref={mainRef}
+        id="main-content"
+        tabIndex={-1}
+        className="relative flex-1 min-h-0 overflow-y-auto focus:outline-none"
+      >
         <div className="max-w-[1600px] mx-auto px-4 xl:px-8 py-4 lg:h-full">
           <ErrorBoundary>
             <Suspense fallback={<LoadingFallback />}>
