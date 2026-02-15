@@ -176,7 +176,7 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
           onClick={onRemove}
           aria-label={cost.name ? `Remove ${cost.name}` : "Remove cost"}
           title={cost.name ? `Remove ${cost.name}` : "Remove cost"}
-          className="p-1 text-slate hover:text-terracotta transition-colors"
+          className="p-1 text-slate hover:text-terracotta transition-colors rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
         >
           <X size={14} />
         </button>
@@ -208,7 +208,7 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
         <div className="flex bg-sand rounded-md p-0.5">
           <button
             onClick={() => handleModeChange("dollar")}
-            className={`px-2 py-1 text-xs font-medium rounded transition-all ${
+            className={`px-2 py-1 text-xs font-medium rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
               cost.mode === "dollar" ? "bg-charcoal text-ivory" : "text-slate hover:text-charcoal"
             }`}
           >
@@ -216,7 +216,7 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
           </button>
           <button
             onClick={() => handleModeChange("percent")}
-            className={`px-2 py-1 text-xs font-medium rounded transition-all ${
+            className={`px-2 py-1 text-xs font-medium rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
               cost.mode === "percent" ? "bg-charcoal text-ivory" : "text-slate hover:text-charcoal"
             }`}
           >
@@ -228,7 +228,7 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
             onClick={() => cost.mode !== "percent" && onChange({ ...cost, frequency: "monthly" })}
             disabled={cost.mode === "percent"}
             title={cost.mode === "percent" ? "Percent mode is always annual" : undefined}
-            className={`px-1.5 py-1 text-xs font-medium rounded transition-all ${
+            className={`px-1.5 py-1 text-xs font-medium rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
               cost.mode === "percent"
                 ? "text-stone cursor-not-allowed"
                 : cost.frequency === "monthly"
@@ -242,7 +242,7 @@ function CustomCostInput({ cost, homePrice, onChange, onRemove }: CustomCostInpu
             onClick={() => cost.mode !== "percent" && onChange({ ...cost, frequency: "yearly" })}
             disabled={cost.mode === "percent"}
             title={cost.mode === "percent" ? "Percent mode is always annual" : undefined}
-            className={`px-1.5 py-1 text-xs font-medium rounded transition-all ${
+            className={`px-1.5 py-1 text-xs font-medium rounded transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta ${
               cost.mode === "percent"
                 ? "bg-charcoal/50 text-ivory/70 cursor-not-allowed"
                 : cost.frequency === "yearly"
