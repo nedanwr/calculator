@@ -1,7 +1,6 @@
 import { DollarSign } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import { getAvailableCurrencies, type Currency } from "~/lib/currency";
 import {
   Select,
   SelectContent,
@@ -9,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "~/components/ui/select";
+import { getAvailableCurrencies, type Currency } from "~/lib/currency";
 
 interface CurrencySelectorProps {
   selectedCurrency: string;
