@@ -1,5 +1,7 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 
+import { cn } from "~/lib/utils";
+
 import { useTheme } from "./theme-provider";
 
 const options = [
@@ -19,23 +21,27 @@ export function ThemeSwitcher() {
 
   return (
     <div
-      role="group"
+      role="tablist"
       aria-label="Theme selection"
-      className="bg-cream flex items-center gap-1 rounded-full p-1"
+      className="bg-secondary border-border flex items-center gap-1 rounded-xl border p-1 shadow-sm"
     >
       {options.map(({ id, icon: Icon }) => {
-        const isPressed = theme === id;
+        const isSelected = theme === id;
         return (
           <button
             key={id}
+            type="button"
+            role="tab"
             onClick={() => setTheme(id)}
-            aria-pressed={isPressed}
+            aria-selected={isSelected}
             aria-label={`${themeLabels[id]} theme`}
-            className={`rounded-full p-2 transition-all duration-200 ${
-              isPressed
-                ? "bg-charcoal text-ivory"
-                : "text-slate hover:text-charcoal"
-            } `}
+            className={cn(
+              "grid h-9 w-9 place-items-center rounded-lg transition-all duration-200",
+              "focus-visible:ring-ring focus:outline-none focus-visible:ring-2",
+              isSelected
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
+            )}
           >
             <Icon size={16} strokeWidth={2} />
           </button>
