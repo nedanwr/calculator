@@ -72,9 +72,9 @@ export function InvestmentCalculator() {
 
   const milestones = useMemo(() => {
     const points: { year: number; value: number }[] = [];
-    const checkYears = [5, 10, 15, 20, 25, 30, 40, 50].filter(
-      (y) => y <= inputs.years
-    );
+    const checkYears = [
+      5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200, 250
+    ].filter((y) => y <= inputs.years);
 
     for (const year of checkYears) {
       const result = calculateInvestment(
@@ -285,7 +285,7 @@ export function InvestmentCalculator() {
               onChange={(years) => setInputs((prev) => ({ ...prev, years }))}
               suffix="yrs"
               min={1}
-              max={50}
+              max={250}
             />
           </div>
           <p className="text-muted-foreground mt-2 text-xs">
