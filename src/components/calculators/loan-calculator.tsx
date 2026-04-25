@@ -404,7 +404,7 @@ export function LoanCalculator() {
               onChange={(years) => setInputs((prev) => ({ ...prev, years }))}
               suffix="yrs"
               min={1}
-              max={30}
+              max={100}
             />
           </div>
         </div>
