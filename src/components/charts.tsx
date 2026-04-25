@@ -52,11 +52,32 @@ function useChartColors() {
       axis: isDark ? "#444040" : "#e0dbd3",
       tooltip: {
         bg: isDark ? "#1a1917" : "#faf8f5",
-        border: isDark ? "#444040" : "#e0dbd3"
+        border: isDark ? "#444040" : "#e0dbd3",
+        text: isDark ? "#f5f2ed" : "#2d2a26"
       }
     }),
     [isDark]
   );
+}
+
+type ChartColors = ReturnType<typeof useChartColors>;
+
+function getTooltipProps(COLORS: ChartColors) {
+  return {
+    contentStyle: {
+      backgroundColor: COLORS.tooltip.bg,
+      border: `1px solid ${COLORS.tooltip.border}`,
+      borderRadius: "8px",
+      color: COLORS.tooltip.text,
+      fontSize: "12px"
+    },
+    itemStyle: {
+      color: COLORS.tooltip.text
+    },
+    labelStyle: {
+      color: COLORS.tooltip.text
+    }
+  };
 }
 
 type ChartView = "balance" | "payments";
@@ -249,12 +270,7 @@ export function BalanceChart({
               <Tooltip
                 formatter={(value) => formatCurrency(value as number)}
                 labelFormatter={(label) => `${periodLabel} ${label}`}
-                contentStyle={{
-                  backgroundColor: COLORS.tooltip.bg,
-                  border: `1px solid ${COLORS.tooltip.border}`,
-                  borderRadius: "8px",
-                  fontSize: "12px"
-                }}
+                {...getTooltipProps(COLORS)}
               />
               <Area
                 type="monotone"
@@ -296,12 +312,7 @@ export function BalanceChart({
               <Tooltip
                 formatter={(value) => formatCurrency(value as number)}
                 labelFormatter={(label) => `${periodLabel} ${label}`}
-                contentStyle={{
-                  backgroundColor: COLORS.tooltip.bg,
-                  border: `1px solid ${COLORS.tooltip.border}`,
-                  borderRadius: "8px",
-                  fontSize: "12px"
-                }}
+                {...getTooltipProps(COLORS)}
               />
               {paymentLines.map((line) => (
                 <Line
@@ -400,12 +411,7 @@ export function PaymentBreakdownChart({
             </Pie>
             <Tooltip
               formatter={(value) => formatCurrency(value as number)}
-              contentStyle={{
-                backgroundColor: COLORS.tooltip.bg,
-                border: `1px solid ${COLORS.tooltip.border}`,
-                borderRadius: "8px",
-                fontSize: "12px"
-              }}
+              {...getTooltipProps(COLORS)}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -505,12 +511,7 @@ export function InvestmentGrowthChart({
             <Tooltip
               formatter={(value) => formatCurrency(value as number)}
               labelFormatter={(label) => `Year ${label}`}
-              contentStyle={{
-                backgroundColor: COLORS.tooltip.bg,
-                border: `1px solid ${COLORS.tooltip.border}`,
-                borderRadius: "8px",
-                fontSize: "12px"
-              }}
+              {...getTooltipProps(COLORS)}
             />
             <Area
               type="monotone"
@@ -603,12 +604,7 @@ export function InvestmentBreakdownChart({
             </Pie>
             <Tooltip
               formatter={(value) => formatCurrency(value as number)}
-              contentStyle={{
-                backgroundColor: COLORS.tooltip.bg,
-                border: `1px solid ${COLORS.tooltip.border}`,
-                borderRadius: "8px",
-                fontSize: "12px"
-              }}
+              {...getTooltipProps(COLORS)}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -714,12 +710,7 @@ export function InvestmentStackedChart({
             <Tooltip
               formatter={(value) => formatCurrency(value as number)}
               labelFormatter={(label) => `Year ${label}`}
-              contentStyle={{
-                backgroundColor: COLORS.tooltip.bg,
-                border: `1px solid ${COLORS.tooltip.border}`,
-                borderRadius: "8px",
-                fontSize: "12px"
-              }}
+              {...getTooltipProps(COLORS)}
             />
             <Area
               type="monotone"
@@ -840,12 +831,7 @@ export function MortgageCostChart({
             </Pie>
             <Tooltip
               formatter={(value) => formatCurrency(value as number)}
-              contentStyle={{
-                backgroundColor: COLORS.tooltip.bg,
-                border: `1px solid ${COLORS.tooltip.border}`,
-                borderRadius: "8px",
-                fontSize: "12px"
-              }}
+              {...getTooltipProps(COLORS)}
             />
           </PieChart>
         </ResponsiveContainer>
