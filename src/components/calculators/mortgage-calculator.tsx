@@ -706,7 +706,7 @@ export function MortgageCalculator() {
               onChange={(years) => setInputs((prev) => ({ ...prev, years }))}
               suffix="yrs"
               min={10}
-              max={30}
+              max={100}
             />
           </div>
           <InputField
